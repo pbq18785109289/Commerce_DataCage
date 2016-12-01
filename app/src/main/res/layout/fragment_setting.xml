@@ -1,0 +1,107 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:stv="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#f0f0f0"
+    android:orientation="vertical">
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="#fff"
+                android:orientation="horizontal" >
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="60dp"
+                    android:paddingLeft="16dp"
+                    android:paddingTop="20dp"
+                    android:text="修改自动登录"
+                    android:textSize="14sp" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="20dp"
+                    android:layout_weight="1" />
+
+                <CheckBox
+                    android:id="@+id/cb_autoLogin"
+                    android:layout_width="22dp"
+                    android:layout_height="22dp"
+                    android:layout_marginRight="10dp"
+                    android:background="@drawable/auto_login_cb"
+                    android:button="@null"
+                    android:textColor="#6e6e6e" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginRight="20dp"
+                    android:text="自动登录"
+                    android:textSize="14sp" />
+            </LinearLayout>
+
+            <com.allen.supertextviewlibrary.SuperTextView
+                android:id="@+id/tv_updatePwd"
+                android:layout_width="match_parent"
+                android:layout_height="50dp"
+                android:layout_marginTop="20dp"
+                stv:sLeftTextString="修改密码"
+                stv:sBottomLineMargin="0dp"
+                stv:sRightIconMarginRight="10dp"
+                stv:sRightIconRes="@mipmap/arrow_right" />
+
+            <com.allen.supertextviewlibrary.SuperTextView
+                android:id="@+id/tv_clearCache"
+                android:layout_width="match_parent"
+                android:layout_height="50dp"
+                stv:sLeftTextString="清除缓存"
+                stv:sBottomLineMargin="0dp"
+                stv:sRightTextString="18.25M"
+                stv:sRightTextMarginRight="30dp"
+                stv:sRightIconMarginRight="10dp"
+                stv:sRightIconRes="@mipmap/arrow_right" />
+
+            <com.allen.supertextviewlibrary.SuperTextView
+                android:id="@+id/tv_closeLocate"
+                android:layout_width="match_parent"
+                android:layout_height="50dp"
+                stv:sLeftTextString="关闭定位信息"
+                stv:sRightTextString="GPS未打开"
+                stv:sRightTextMarginRight="30dp"
+                stv:sBottomLineMargin="0dp"
+                stv:sRightIconMarginRight="10dp"
+                stv:sRightIconRes="@mipmap/arrow_right" />
+
+            <com.allen.supertextviewlibrary.SuperTextView
+                android:id="@+id/tv_version_update"
+                android:layout_width="match_parent"
+                android:layout_height="50dp"
+                android:layout_marginTop="20dp"
+                stv:sLeftTextString="检查版本更新"
+                stv:sBottomLineMargin="0dp"
+                stv:sRightIconMarginRight="10dp"
+                stv:sRightIconRes="@mipmap/arrow_right" />
+
+            <com.allen.supertextviewlibrary.SuperTextView
+                android:id="@+id/tv_exit"
+                android:layout_width="match_parent"
+                android:layout_height="50dp"
+                stv:sLeftTextString="退出当前账号"
+                stv:sBottomLineMargin="0dp"
+                stv:sRightIconMarginRight="10dp"
+                stv:sRightIconRes="@mipmap/arrow_right" />
+        </LinearLayout>
+    </ScrollView>
+
+</LinearLayout>
