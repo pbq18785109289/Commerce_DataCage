@@ -63,7 +63,6 @@ public class Fragment_Setting extends Fragment implements View.OnClickListener {
     public void OnCheckedChanged(CompoundButton buttonView, boolean isChecked){
         //更改自动登录状态
         sp.edit().putBoolean("AUTO_ISCHECK",isChecked).commit();
-        Toast.makeText(getContext(),isChecked+"后",Toast.LENGTH_SHORT).show();
     }
 
     @OnClick({R.id.tv_updatePwd, R.id.tv_clearCache, R.id.tv_closeLocate, R.id.tv_version_update, R.id.tv_exit})

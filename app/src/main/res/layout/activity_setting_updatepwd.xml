@@ -7,13 +7,6 @@
     <!-- toolbar-->
     <include layout="@layout/toolbar"/>
 
-    <View
-        android:layout_width="250dp"
-        android:layout_height="1dp"
-        android:layout_marginLeft="50dp"
-        android:layout_marginRight="20dp"
-        android:background="#c0c0c0" />
-
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="60dp"
@@ -39,7 +32,12 @@
             android:background="@null"
             android:ems="10" />
     </RelativeLayout>
-
+    <View
+        android:layout_width="250dp"
+        android:layout_height="1dp"
+        android:layout_marginLeft="50dp"
+        android:layout_marginRight="20dp"
+        android:background="#c0c0c0" />
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="60dp">

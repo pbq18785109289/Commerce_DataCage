@@ -2,23 +2,35 @@ package com.dhcc.datacage.activity;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
+import android.support.design.widget.NavigationView;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
+import android.support.v4.view.GravityCompat;
+import android.support.v4.widget.DrawerLayout;
+import android.support.v7.app.ActionBar;
+import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.view.MenuItem;
 import android.widget.FrameLayout;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.TextView;
 import android.widget.Toast;
+
 import com.dhcc.datacage.R;
 import com.dhcc.datacage.base.BaseActivity;
 import com.dhcc.datacage.fragments.Fragment_Setting;
 import com.dhcc.datacage.fragments.Fragment_Synerg;
 import com.dhcc.datacage.fragments.Fragment_Workbench;
+
 import java.util.ArrayList;
 import java.util.List;
+
 import butterknife.Bind;
-import cn.jpush.android.api.JPushInterface;
+import butterknife.ButterKnife;
+
+import static com.dhcc.datacage.R.id.toolbar_title;
 
 
 /**
@@ -26,8 +38,8 @@ import cn.jpush.android.api.JPushInterface;
  *
  * @author pengbangqin
  */
-public class MainActivity extends BaseActivity implements RadioGroup.OnCheckedChangeListener {
-    @Bind(R.id.toolbar_title)
+public class MainActivity extends AppCompatActivity implements RadioGroup.OnCheckedChangeListener {
+    @Bind(toolbar_title)
     TextView toolbarTitle;
     @Bind(R.id.toolbar)
     Toolbar toolbar;
@@ -41,6 +53,10 @@ public class MainActivity extends BaseActivity implements RadioGroup.OnCheckedCh
     RadioButton rbSetting;
     @Bind(R.id.rg)
     RadioGroup rg;
+    @Bind(R.id.nav_view)
+    NavigationView mNavView;
+    @Bind(R.id.drawerlayoout)
+    DrawerLayout mDrawerlayoout;
     private List<Fragment> list;
     /**
      * 选中的Fragment的对应的位置
@@ -55,13 +71,39 @@ public class MainActivity extends BaseActivity implements RadioGroup.OnCheckedCh
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        initToolBar(toolbar,toolbarTitle,false,"数据铁笼");
+        ButterKnife.bind(this);
+        //使用toolbar代替ActionBar,是外观和功能一致
+        setSupportActionBar(toolbar);
+        ActionBar actionBar=getSupportActionBar();
+        if(actionBar!=null){
+            //让导航按钮显示出来
+            actionBar.setDisplayHomeAsUpEnabled(true);
+            //设置一份导航按钮的图标
+            actionBar.setHomeAsUpIndicator(R.mipmap.ic_menu);
+        }
         //初始化Fragment
         initFragment();
+        initView();
         //注册监听
         rg.setOnCheckedChangeListener(this);
         //设置默认选中第一个
         rg.check(R.id.rb_workbench);
+    }
+
+    /**
+     *初始化侧滑菜单
+     */
+    private void initView() {
+        //默认选中call
+        mNavView.setCheckedItem(R.id.nav_call);
+        //菜单项选中监听
+        mNavView.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
+            @Override
+            public boolean onNavigationItemSelected(@NonNull MenuItem item) {
+                mDrawerlayoout.closeDrawers();
+                return true;
+            }
+        });
     }
 
     private void initFragment() {
@@ -117,13 +159,15 @@ public class MainActivity extends BaseActivity implements RadioGroup.OnCheckedCh
             }
         }
     }
+
     //两次点击退出
     private long mExitTime;//点击时间
+
     @Override
     public void onBackPressed() {
 
         if ((System.currentTimeMillis() - mExitTime) > 2000) {//两次点击的时间间隔
-            Toast.makeText(this, "再按一次退出",Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, "再按一次退出", Toast.LENGTH_SHORT).show();
             mExitTime = System.currentTimeMillis();
         } else {
             finish();//结束当前Activity
@@ -133,5 +177,23 @@ public class MainActivity extends BaseActivity implements RadioGroup.OnCheckedCh
             startActivity(startMain);
             System.exit(0);// 退出程序
         }
+    }
+
+    /**
+     * 重写onOptionsItemSelected
+     * 点击home弹出侧滑菜单
+     * @param item
+     * @return
+     */
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()){
+            //HomeAsUp的id永远都是android.R.id.home
+            case android.R.id.home:
+                //展示滑动菜单
+                mDrawerlayoout.openDrawer(GravityCompat.START);
+                break;
+        }
+        return true;
     }
 }

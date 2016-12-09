@@ -44,6 +44,7 @@ public abstract class BaseActivity extends AppCompatActivity{
         toolbar.setTitle("");
         toolbarTitle.setText(title);
         setSupportActionBar(toolbar);
+        //让导航按钮显示出来
         getSupportActionBar().setDisplayHomeAsUpEnabled(homeAsUpEnabled);
     }
 
@@ -58,7 +59,7 @@ public abstract class BaseActivity extends AppCompatActivity{
     }
     /** 获取系统状态栏颜色 **/
     public int getColorPrimary(){
-        return getResources().getColor(R.color.colorAccent);
+        return getResources().getColor(R.color.colorPrimary);
     }
 
     /**

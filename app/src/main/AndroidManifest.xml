@@ -51,11 +51,11 @@
         <activity android:name=".activity.MainActivity"/>
 
         <!-- 检查 -->
-        <activity android:name=".activity.law.CheckActivty"/>
+        <activity android:name=".activity.law.Check_Activity"/>
 
         <!-- 工作台模块 -->
         <!-- 消息通知 -->
-        <activity android:name=".activity.workbench.InfoNotification_Activityy"/>
+        <activity android:name=".activity.workbench.InfoNotification_Activity"/>
         <!-- 音视频会议-->
         <activity android:name=".activity.workbench.VedioConference_Activity" android:windowSoftInputMode="adjustPan"/>
         <!-- 待办已办综合查询-->

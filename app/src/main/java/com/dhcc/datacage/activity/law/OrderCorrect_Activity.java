@@ -55,7 +55,6 @@ public class OrderCorrect_Activity extends BaseActivity {
         if (getSupportActionBar() != null) {
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         }
-        mToolbar.setNavigationIcon(R.mipmap.icon_back);
         //设置返回图标的点击事件
         mToolbar.setNavigationOnClickListener(new View.OnClickListener() {
             @Override
@@ -64,14 +63,13 @@ public class OrderCorrect_Activity extends BaseActivity {
             }
         });
         //设置还没收缩时状态下字体颜色
-        mToolbarLayout.setExpandedTitleColor(Color.RED);
+        mToolbarLayout.setExpandedTitleColor(Color.WHITE);
         mToolbarLayout.setExpandedTitleGravity(Gravity.CENTER);
         mToolbarLayout.setTitle("责令整改");
         //设置收缩后Toolbar上字体的颜色
         mToolbarLayout.setCollapsedTitleTextColor(Color.WHITE);
         //设置image背景
-        mDetailImg.setBackgroundColor(Color.parseColor("#76b1cc"));
-//        mDetailImg.setBackgroundResource(R.mipmap.bg);
+        mDetailImg.setBackgroundColor(getColorPrimary());
 
         mFab.setOnClickListener(new View.OnClickListener() {
             @Override
