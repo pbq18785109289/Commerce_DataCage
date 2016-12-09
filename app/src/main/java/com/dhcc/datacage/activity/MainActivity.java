@@ -10,16 +10,15 @@ import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.TextView;
 import android.widget.Toast;
-
 import com.dhcc.datacage.R;
 import com.dhcc.datacage.base.BaseActivity;
-import com.dhcc.datacage.fragments.Fragment_Law;
 import com.dhcc.datacage.fragments.Fragment_Setting;
 import com.dhcc.datacage.fragments.Fragment_Synerg;
 import com.dhcc.datacage.fragments.Fragment_Workbench;
 import java.util.ArrayList;
 import java.util.List;
 import butterknife.Bind;
+import cn.jpush.android.api.JPushInterface;
 
 
 /**
@@ -36,8 +35,6 @@ public class MainActivity extends BaseActivity implements RadioGroup.OnCheckedCh
     FrameLayout flContent;
     @Bind(R.id.rb_workbench)
     RadioButton rbWorkbench;
-    @Bind(R.id.rb_law)
-    RadioButton rbLaw;
     @Bind(R.id.rb_synergy)
     RadioButton rbSynergy;
     @Bind(R.id.rb_setting)
@@ -70,7 +67,6 @@ public class MainActivity extends BaseActivity implements RadioGroup.OnCheckedCh
     private void initFragment() {
         list = new ArrayList<Fragment>();
         list.add(new Fragment_Workbench());
-        list.add(new Fragment_Law());
         list.add(new Fragment_Synerg());
         list.add(new Fragment_Setting());
     }
@@ -87,14 +83,11 @@ public class MainActivity extends BaseActivity implements RadioGroup.OnCheckedCh
             case R.id.rb_workbench:
                 position = 0;
                 break;
-            case R.id.rb_law:
+            case R.id.rb_synergy:
                 position = 1;
                 break;
-            case R.id.rb_synergy:
-                position = 2;
-                break;
             case R.id.rb_setting:
-                position = 3;
+                position = 2;
                 break;
         }
         //根据位置得到对应的Fragment

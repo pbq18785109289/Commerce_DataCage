@@ -3,6 +3,7 @@ package com.dhcc.datacage.fragments;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.location.LocationManager;
 import android.os.Bundle;
 import android.provider.Settings;
@@ -24,6 +25,8 @@ import butterknife.ButterKnife;
 import butterknife.OnCheckedChanged;
 import butterknife.OnClick;
 
+import static android.content.Context.MODE_PRIVATE;
+
 /**
  * 设置的Fragment
  *
@@ -42,18 +45,25 @@ public class Fragment_Setting extends Fragment implements View.OnClickListener {
     SuperTextView tvVersionUpdate;
     @Bind(R.id.tv_exit)
     SuperTextView tvExit;
+    private SharedPreferences sp;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View view = View.inflate(getActivity(), R.layout.fragment_setting, null);
         ButterKnife.bind(this, view);
+        sp= getActivity().getSharedPreferences("user",getActivity().MODE_PRIVATE);
+        //设置自动登录的选中状态
+        cbAutoLogin.setChecked(sp.getBoolean("AUTO_ISCHECK",false));
+        Toast.makeText(getContext(),sp.getBoolean("AUTO_ISCHECK",false)+"先",Toast.LENGTH_SHORT).show();
         return view;
     }
 
     @OnCheckedChanged(R.id.cb_autoLogin)
     public void OnCheckedChanged(CompoundButton buttonView, boolean isChecked){
-        Log.i("zll",""+isChecked);
+        //更改自动登录状态
+        sp.edit().putBoolean("AUTO_ISCHECK",isChecked).commit();
+        Toast.makeText(getContext(),isChecked+"后",Toast.LENGTH_SHORT).show();
     }
 
     @OnClick({R.id.tv_updatePwd, R.id.tv_clearCache, R.id.tv_closeLocate, R.id.tv_version_update, R.id.tv_exit})

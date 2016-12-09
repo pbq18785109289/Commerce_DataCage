@@ -9,6 +9,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ListView;
 import com.dhcc.datacage.R;
+import com.dhcc.datacage.activity.law.OrderCorrect_Activity;
+import com.dhcc.datacage.activity.workbench.InfoNotification_Activityy;
 import com.dhcc.datacage.activity.workbench.IntegrateQuery_Activity;
 import com.dhcc.datacage.activity.workbench.VedioConference_Activity;
 import com.dhcc.datacage.base.BaseListViewAdapter;
@@ -44,12 +46,16 @@ public class Fragment_Workbench extends Fragment{
     public void onItemClick(int position) {
         switch (position) {
             case 0:
+                Intent i0 = new Intent(getActivity(), InfoNotification_Activityy.class);
+                startActivity(i0);
                 break;
             case 1:
                 Intent i1 = new Intent(getActivity(), VedioConference_Activity.class);
                 startActivity(i1);
                 break;
             case 2:
+                Intent i2 = new Intent(getActivity(), OrderCorrect_Activity.class);
+                startActivity(i2);
                 break;
             case 3:
                 break;

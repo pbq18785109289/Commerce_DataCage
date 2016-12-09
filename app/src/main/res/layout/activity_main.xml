@@ -23,6 +23,7 @@
         android:layout_height="wrap_content"
         android:orientation="horizontal"
         >
+
         <RadioButton
             android:id="@+id/rb_workbench"
             android:text="工作台"
@@ -32,15 +33,7 @@
 
             style="@style/bottom_style"
             />
-        <RadioButton
-            android:id="@+id/rb_law"
-            android:text="执法"
-            android:drawableTop="@drawable/law_selector"
-            android:textSize="10sp"
-            android:textColor="@drawable/rb_textcolor_selector"
 
-            style="@style/bottom_style"
-            />
         <RadioButton
             android:text="协同"
             android:id="@+id/rb_synergy"

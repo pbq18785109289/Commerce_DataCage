@@ -4,17 +4,23 @@ android {
     compileSdkVersion 24
     buildToolsVersion "24.0.2"
 
-    sourceSets {
-        main {
-            jniLibs.srcDir 'libs'
-        }
-    }
     defaultConfig {
         applicationId "com.dhcc.datacage"
         minSdkVersion 14
         targetSdkVersion 24
         versionCode 1
         versionName "1.0"
+
+        ndk {
+            //选择要添加的对应cpu类型的.so库。
+            abiFilters 'armeabi', 'armeabi-v7a', 'armeabi-v8a'
+            // 还可以添加 'x86', 'x86_64', 'mips', 'mips64'
+        }
+        manifestPlaceholders = [
+                JPUSH_PKGNAME : applicationId,
+                JPUSH_APPKEY : "8f3afff8c60bf005dc87ef91", //JPush上注册的包名对应的appkey.
+                JPUSH_CHANNEL : "developer-default", //暂时填写默认值即可.
+        ]
     }
     buildTypes {
         release {
@@ -39,6 +45,8 @@ dependencies {
     compile 'com.lzy.widget:ninegridview:0.2.0'
     compile 'com.allen.supertextview:supertextview:1.0.3'
     compile 'com.jakewharton:butterknife:7.0.1'
+
+    compile 'cn.jiguang:jpush:2.2.0'  // 推送依赖
     //对话框风格
 //    compile 'com.afollestad.material-dialogs:commons:0.9.1.0'
 }

@@ -7,14 +7,11 @@ import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
 import android.widget.ListView;
-import android.widget.TextView;
 import com.dhcc.datacage.R;
 import com.dhcc.datacage.activity.synergy.TeamWork_Activity;
 import com.dhcc.datacage.base.BaseListViewAdapter;
 import com.dhcc.datacage.utils.DataUtil;
-
 import butterknife.Bind;
 import butterknife.ButterKnife;
 import butterknife.OnItemClick;
