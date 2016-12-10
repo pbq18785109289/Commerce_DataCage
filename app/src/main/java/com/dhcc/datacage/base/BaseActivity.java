@@ -1,7 +1,6 @@
 package com.dhcc.datacage.base;
 
 import android.app.ProgressDialog;
-import android.graphics.Color;
 import android.os.Bundle;
 import android.support.annotation.LayoutRes;
 import android.support.annotation.Nullable;
@@ -12,11 +11,9 @@ import android.view.View;
 import android.view.Window;
 import android.widget.TextView;
 import android.widget.Toast;
-
 import com.dhcc.datacage.R;
 import com.dhcc.datacage.utils.SnackbarUtils;
-
-import butterknife.ButterKnife;
+import com.jaeger.library.StatusBarUtil;
 
 /**
  * Created by pengbangqin on 16-11-9.
@@ -31,12 +28,11 @@ public abstract class BaseActivity extends AppCompatActivity{
     @Override
     public void setContentView(@LayoutRes int layoutResID) {
         super.setContentView(layoutResID);
-        ButterKnife.bind(this);
+        StatusBarUtil.setTranslucent(this,60);
     }
     @Override
     public void setContentView(View view) {
         super.setContentView(view);
-        ButterKnife.bind(this);
     }
 
     /** 初始化 Toolbar */
@@ -83,7 +79,6 @@ public abstract class BaseActivity extends AppCompatActivity{
         dialog.setMessage("请求网络中...");
         dialog.show();
     }
-
     public void dismissLoading() {
         if (dialog != null && dialog.isShowing()) {
             dialog.dismiss();

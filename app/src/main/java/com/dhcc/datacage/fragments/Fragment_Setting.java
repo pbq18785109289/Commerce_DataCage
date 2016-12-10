@@ -19,13 +19,19 @@ import android.widget.Toast;
 import com.allen.supertextviewlibrary.SuperTextView;
 import com.dhcc.datacage.R;
 import com.dhcc.datacage.activity.LoginActivity;
+import com.dhcc.datacage.activity.MainActivity;
 import com.dhcc.datacage.activity.setting.UpdatePwd_Activity;
+import com.dhcc.datacage.utils.DataClearManager;
+import com.dhcc.datacage.utils.MyApp;
+import com.dhcc.datacage.utils.SnackbarUtils;
+
 import butterknife.Bind;
 import butterknife.ButterKnife;
 import butterknife.OnCheckedChanged;
 import butterknife.OnClick;
 
 import static android.content.Context.MODE_PRIVATE;
+import static com.dhcc.datacage.R.mipmap.on;
 
 /**
  * 设置的Fragment
@@ -55,8 +61,35 @@ public class Fragment_Setting extends Fragment implements View.OnClickListener {
         sp= getActivity().getSharedPreferences("user",getActivity().MODE_PRIVATE);
         //设置自动登录的选中状态
         cbAutoLogin.setChecked(sp.getBoolean("AUTO_ISCHECK",false));
-        Toast.makeText(getContext(),sp.getBoolean("AUTO_ISCHECK",false)+"先",Toast.LENGTH_SHORT).show();
+        getCacheSize();
+        initGPS();
         return view;
+    }
+
+    /**
+     * 获取缓存大小
+     */
+    private void getCacheSize() {
+        try {
+            tvClearCache.setRightString(DataClearManager.getTotalCacheSize(getActivity()));
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    /**
+     * 初始化GPS打开关闭控件信息
+     */
+    private void initGPS() {
+        LocationManager locationManager = (LocationManager) getActivity()
+                .getSystemService(Context.LOCATION_SERVICE);
+        // 判断GPS模块是否开启，如果没有则开启
+        if (locationManager
+                .isProviderEnabled(LocationManager.GPS_PROVIDER)) {
+            tvCloseLocate.setRightString("已打开");
+        } else {
+            tvCloseLocate.setRightString("GPS未打开");
+        }
     }
 
     @OnCheckedChanged(R.id.cb_autoLogin)
@@ -87,7 +120,7 @@ public class Fragment_Setting extends Fragment implements View.OnClickListener {
         }
     }
     /**
-     * 弹出确认清楚缓存对话框
+     * 弹出版本更新对话框
      */
     private void showUpdateDialog() {
         new AlertDialog.Builder(getActivity())
@@ -115,31 +148,27 @@ public class Fragment_Setting extends Fragment implements View.OnClickListener {
                 .setPositiveButton("确认", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-                        tvClearCache.setRightString("0.0M");
-                        Toast.makeText(getActivity(), "清除缓存中...", Toast.LENGTH_SHORT).show();
+                       //清除操作
+                        DataClearManager.clearAllCache(getActivity());
+//                        DataClearManager.cleanApplicationData(getActivity(),"");
+                        getCacheSize();
+                        SnackbarUtils.Long(tvExit,"缓存清除成功").backColor(getColorPrimary()).show();
                     }
                 }).create().show();
+    }
+    /** 获取系统状态栏颜色 **/
+    public int getColorPrimary(){
+        return getResources().getColor(R.color.colorPrimary);
     }
 
     /**
      * 关闭GPS
      */
     private void closeGPS() {
-        LocationManager locationManager = (LocationManager) getActivity()
-                .getSystemService(Context.LOCATION_SERVICE);
-        // 判断GPS模块是否开启，如果没有则开启
-        if (locationManager
-                .isProviderEnabled(LocationManager.GPS_PROVIDER)) {
-            tvCloseLocate.setRightString("已打开");
-            // 转到手机设置界面，用户设置GPS
-            Intent intent = new Intent(
-                    Settings.ACTION_LOCATION_SOURCE_SETTINGS);
-            startActivityForResult(intent, 0); // 设置完成后返回到原来的界面
-
-        } else {
-            tvCloseLocate.setRightString("GPS未打开");
-            Toast.makeText(getActivity(), "GPS未打开", Toast.LENGTH_SHORT).show();
-        }
+        // 转到手机设置界面，用户设置GPS
+        Intent intent = new Intent(
+                Settings.ACTION_LOCATION_SOURCE_SETTINGS);
+        startActivityForResult(intent, 0); // 设置完成后返回到原来的界面
     }
 
     /**
@@ -148,17 +177,27 @@ public class Fragment_Setting extends Fragment implements View.OnClickListener {
     private void showExitDialog() {
         new AlertDialog.Builder(getActivity())
 //                .setIcon(R.mipmap.exit)
-                .setTitle("退出应用")
-                .setMessage("确认退出应用")
+                .setTitle("退出账号")
+                .setMessage("确认退出账号?")
                 .setNegativeButton("取消", null)
                 .setPositiveButton("确认", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         getActivity().finish();//结束当前Activity
                         Intent startMain = new Intent(getActivity(), LoginActivity.class);
+                        //是从设置中跳转到登录界面
+                        MyApp.isExitLogin=true;
+                        startMain.putExtra("isExitLogin",true);
                         startActivity(startMain);
                     }
-                }).create().show();
+              }).create().show();
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        getCacheSize();
+        initGPS();
     }
 
     @Override

@@ -1,13 +1,45 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:stv="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="#f0f0f0"
     android:orientation="vertical" >
-
-    <ListView
-        android:id="@+id/lv_workbench"
+    <com.allen.supertextviewlibrary.SuperTextView
+        android:id="@+id/stv_gzt1"
         android:layout_width="match_parent"
-        android:layout_height="match_parent" >
-    </ListView>
+        android:layout_height="50dp"
+        android:layout_marginTop="20dp"
+        stv:sLeftIconRes="@mipmap/gzt1"
+        stv:sBottomLineMargin="0dp"
+        stv:sLeftTextString="信息通知" />
+    <com.allen.supertextviewlibrary.SuperTextView
+        android:id="@+id/stv_gzt2"
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        stv:sLeftIconRes="@mipmap/gzt2"
+        stv:sBottomLineMargin="0dp"
+        stv:sLeftTextString="音视频会议" />
+    <com.allen.supertextviewlibrary.SuperTextView
+        android:id="@+id/stv_gzt3"
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        stv:sLeftIconRes="@mipmap/gzt3"
+        stv:sBottomLineMargin="0dp"
+        stv:sLeftTextString="我的待办" />
 
+    <com.allen.supertextviewlibrary.SuperTextView
+        android:id="@+id/stv_gzt4"
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:layout_marginTop="20dp"
+        stv:sLeftIconRes="@mipmap/gzt4"
+        stv:sBottomLineMargin="0dp"
+        stv:sLeftTextString="我的已办" />
+    <com.allen.supertextviewlibrary.SuperTextView
+        android:id="@+id/stv_gzt5"
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        stv:sLeftIconRes="@mipmap/gzt5"
+        stv:sBottomLineMargin="0dp"
+        stv:sLeftTextString="我的待办已办综合查询" />
 </LinearLayout>

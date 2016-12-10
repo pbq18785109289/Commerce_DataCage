@@ -1,57 +1,33 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
     android:background="#fff"
     >
-    <!-- toolbar-->
-    <include layout="@layout/toolbar"/>
-    <LinearLayout
-        android:layout_width="fill_parent"
-        android:layout_height="20dp"
-        android:background="#f0f0f0" >
-    </LinearLayout>
+    <FrameLayout
+        android:id="@+id/toolbar_container"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+        <!-- toolbar-->
+        <include layout="@layout/toolbar"/>
 
-    <LinearLayout
-        android:orientation="horizontal"
-        android:layout_width="fill_parent"
-        android:layout_height="50dp" >
-
-        <EditText
-            android:id="@+id/et_query"
-            android:layout_marginLeft="20dp"
-            android:background="@null"
-            android:hint="请输入..."
-            android:layout_height="fill_parent"
-            android:layout_width="0dp"
-            android:layout_weight="1"
-            />
-        <Button
-            android:layout_gravity="center"
-            android:layout_marginRight="20dp"
-            android:layout_width="30dp"
-            android:layout_height="30dp"
-            android:background="@mipmap/search"
-            />
-    </LinearLayout>
-
-    <LinearLayout
-        android:layout_width="fill_parent"
-        android:layout_height="20dp"
-        android:background="#f0f0f0" >
-    </LinearLayout>
+        <com.miguelcatalan.materialsearchview.MaterialSearchView
+            android:id="@+id/search_view"
+            style="@style/MaterialSearchViewStyle"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+    </FrameLayout>
     <android.support.v4.widget.SwipeRefreshLayout
         android:id="@+id/swipe_refresh"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
-    <android.support.v7.widget.RecyclerView
-        android:layout_marginRight="5dp"
-        android:layout_marginLeft="5dp"
-        android:id="@+id/rv"
-        android:layout_centerVertical="true"
-        android:layout_centerHorizontal="true"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"/>
+        <android.support.v7.widget.RecyclerView
+            android:layout_marginRight="5dp"
+            android:layout_marginLeft="5dp"
+            android:id="@+id/rv"
+            android:layout_centerVertical="true"
+            android:layout_centerHorizontal="true"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"/>
     </android.support.v4.widget.SwipeRefreshLayout>
 </LinearLayout>

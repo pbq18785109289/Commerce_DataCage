@@ -6,6 +6,10 @@
     android:layout_height="match_parent">
     <include layout="@layout/toolbar"/>
 
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="20dp"
+        android:background="#f0f0f0" />
     <LinearLayout
         android:layout_weight="1"
         android:background="#f0f0f0"
@@ -17,84 +21,83 @@
             android:orientation="vertical"
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
-            <LinearLayout
-                android:layout_margin="5dp"
-                android:orientation="horizontal"
+            <android.support.design.widget.TextInputLayout
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content">
-                <TextView
-                    android:textSize="15dp"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="企业名称:"
-                    />
+                android:layout_height="50dp"
+                android:layout_marginLeft="8dp"
+                android:layout_marginRight="8dp">
                 <com.dhcc.datacage.view.ClearEditText
-                    android:focusable="false"
                     android:id="@+id/et_company"
-                    android:layout_marginLeft="35dp"
-                    android:layout_marginRight="5dp"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content" />
-            </LinearLayout>
-
-            <LinearLayout
-                android:layout_margin="5dp"
-                android:orientation="horizontal"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content">
-                <TextView
-                    android:textSize="15dp"
-                    android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="企业名称:"
-                    />
+                    android:layout_marginLeft="14dp"
+                    android:background="@null"
+                    android:hint="企业名称"
+                    android:textColor="#424242"
+                    android:textSize="18sp" />
+            </android.support.design.widget.TextInputLayout>
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="#f5f5f5" />
+            <android.support.design.widget.TextInputLayout
+                android:layout_width="match_parent"
+                android:layout_height="50dp"
+                android:layout_marginLeft="8dp"
+                android:layout_marginRight="8dp">
                 <com.dhcc.datacage.view.ClearEditText
-                    android:focusable="false"
                     android:id="@+id/et_address"
-                    android:layout_marginLeft="35dp"
-                    android:layout_marginRight="5dp"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content" />
-            </LinearLayout>
-            <LinearLayout
-                android:layout_margin="5dp"
-                android:orientation="horizontal"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content">
-                <TextView
-                    android:textSize="15dp"
-                    android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="区域名称:"
-                    />
+                    android:layout_marginLeft="14dp"
+                    android:background="@null"
+                    android:hint="企业地址"
+                    android:textColor="#424242"
+                    android:textSize="18sp" />
+            </android.support.design.widget.TextInputLayout>
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="#f5f5f5" />
+            <android.support.design.widget.TextInputLayout
+                android:layout_width="match_parent"
+                android:layout_height="50dp"
+                android:layout_marginLeft="8dp"
+                android:layout_marginRight="8dp">
 
-                <com.dhcc.datacage.view.ClearEditText
-                    android:focusable="false"
-                    android:id="@+id/et_person"
-                    android:layout_marginLeft="35dp"
-                    android:layout_marginRight="5dp"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content" />
-            </LinearLayout>
-            <LinearLayout
-                android:layout_margin="5dp"
-                android:orientation="horizontal"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content">
-                <TextView
-                    android:textSize="15dp"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="法人:"
-                    />
                 <com.dhcc.datacage.view.ClearEditText
                     android:id="@+id/et_areas"
-                    android:focusable="false"
-                    android:layout_marginLeft="65dp"
-                    android:layout_marginRight="5dp"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content" />
-            </LinearLayout>
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="14dp"
+                    android:background="@null"
+                    android:hint="区域名称"
+                    android:textColor="#424242"
+                    android:textSize="18sp" />
+            </android.support.design.widget.TextInputLayout>
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="#f5f5f5" />
+            <android.support.design.widget.TextInputLayout
+                android:layout_width="match_parent"
+                android:layout_height="50dp"
+                android:layout_marginLeft="8dp"
+                android:layout_marginRight="8dp">
+                <com.dhcc.datacage.view.ClearEditText
+                    android:id="@+id/et_person"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="14dp"
+                    android:background="@null"
+                    android:hint="法人"
+                    android:textColor="#424242"
+                    android:textSize="18sp" />
+            </android.support.design.widget.TextInputLayout>
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="#f5f5f5" />
         </LinearLayout>
         <View
             android:layout_width="match_parent"
@@ -106,36 +109,39 @@
             android:orientation="vertical"
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
-            <LinearLayout
-                android:layout_margin="5dp"
-                android:orientation="horizontal"
+            <android.support.design.widget.TextInputLayout
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content">
-                <TextView
-                    android:textSize="15dp"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="检查结果:"
-                    />
+                android:layout_height="50dp"
+                android:layout_marginLeft="8dp"
+                android:layout_marginRight="8dp">
                 <com.dhcc.datacage.view.ClearEditText
                     android:id="@+id/et_result"
-                    android:layout_marginLeft="35dp"
-                    android:layout_marginRight="5dp"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content" />
-            </LinearLayout>
-            <LinearLayout
-                android:layout_margin="5dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="14dp"
+                    android:background="@null"
+                    android:hint="检查结果"
+                    android:textColor="#424242"
+                    android:textSize="18sp" />
+            </android.support.design.widget.TextInputLayout>
+            <View
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
+                android:layout_height="1dp"
+                android:background="#f5f5f5" />
+            <LinearLayout
+                android:layout_marginLeft="22dp"
+                android:layout_width="match_parent"
+                android:layout_height="50dp"
                 android:orientation="horizontal"
                 >
                 <TextView
-                    android:text="检查情况:"
-                    android:textSize="15dp"
+                    android:layout_gravity="center"
+                    android:text="检查情况"
+                    android:textSize="18sp"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content" />
                 <RadioGroup
+                    android:layout_gravity="center"
                     android:layout_marginLeft="35dp"
                     android:layout_marginRight="5dp"
                     android:orientation="horizontal"
@@ -158,8 +164,6 @@
                 </RadioGroup>
             </LinearLayout>
         </LinearLayout>
-
-
     </LinearLayout>
 
     <View
@@ -197,9 +201,5 @@
             android:text="返回"
             android:textSize="17sp" />
     </LinearLayout>
-    <View
-        android:layout_width="match_parent"
-        android:layout_height="0.5dp"
-        android:background="#c0c0c0" />
 
 </LinearLayout>

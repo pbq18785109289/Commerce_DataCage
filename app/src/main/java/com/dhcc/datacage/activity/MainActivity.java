@@ -23,6 +23,7 @@ import com.dhcc.datacage.base.BaseActivity;
 import com.dhcc.datacage.fragments.Fragment_Setting;
 import com.dhcc.datacage.fragments.Fragment_Synerg;
 import com.dhcc.datacage.fragments.Fragment_Workbench;
+import com.jaeger.library.StatusBarUtil;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -72,6 +73,7 @@ public class MainActivity extends AppCompatActivity implements RadioGroup.OnChec
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         ButterKnife.bind(this);
+        StatusBarUtil.setTranslucent(this,60);
         //使用toolbar代替ActionBar,是外观和功能一致
         setSupportActionBar(toolbar);
         ActionBar actionBar=getSupportActionBar();

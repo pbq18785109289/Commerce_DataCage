@@ -10,10 +10,13 @@ import com.dhcc.datacage.R;
 import com.dhcc.datacage.base.BaseRecyclerAdapter;
 import com.dhcc.datacage.model.Law;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
+
+import static android.R.id.list;
 
 /**
  * Created by pengbangqin on 16-10-27.
@@ -35,6 +38,15 @@ public class MyQueryAdapter extends BaseRecyclerAdapter<Law,RecyclerView.ViewHol
         return  new MyViewHolder(view);
     }
 
+    /**
+     * 筛选后的list
+     * @param laws
+     */
+    public void setFilter(List<Law> laws) {
+        mDatas = new ArrayList<>();
+        mDatas.addAll(laws);
+        notifyDataSetChanged();
+    }
     @Override
     public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
         if (holder instanceof MyViewHolder) {
@@ -64,4 +76,46 @@ public class MyQueryAdapter extends BaseRecyclerAdapter<Law,RecyclerView.ViewHol
             ButterKnife.bind(this,itemView);
         }
     }
+    //    public void animateTo(List<Law> laws) {
+//        applyAndAnimateRemovals(laws);
+//        applyAndAnimateAdditions(laws);
+//        applyAndAnimateMovedItems(laws);
+//    }
+//
+//    private void applyAndAnimateRemovals(List<Law> peoples) {
+//        for (int i = mDatas.size() - 1; i >= 0; i--) {
+//            final Law law = mDatas.get(i);
+//            if (!peoples.contains(law)) {
+//                removeItem(i);
+//            }
+//        }
+//    }
+//
+//    private void applyAndAnimateAdditions(List<Law> peoples) {
+//        for (int i = 0, count = peoples.size(); i < count; i++) {
+//            final Law law = mDatas.get(i);
+//            if (!mDatas.contains(law)) {
+//                addItem(i, law);
+//            }
+//        }
+//    }
+//    public void addItem(int position, Law law) {
+//        mDatas.add(position, law);
+//        notifyItemInserted(position);
+//    }
+//
+//    private void applyAndAnimateMovedItems(List<Law> peoples) {
+//        for (int toPosition = peoples.size() - 1; toPosition >= 0; toPosition--) {
+//            final Law law = peoples.get(toPosition);
+//            final int fromPosition = mDatas.indexOf(law);
+//            if (fromPosition >= 0 && fromPosition != toPosition) {
+//                moveItem(fromPosition, toPosition);
+//            }
+//        }
+//    }
+//    public void moveItem(int fromPosition, int toPosition) {
+//        final Law people = mDatas.remove(fromPosition);
+//        mDatas.add(toPosition, people);
+//        notifyItemMoved(fromPosition, toPosition);
+//    }
 }

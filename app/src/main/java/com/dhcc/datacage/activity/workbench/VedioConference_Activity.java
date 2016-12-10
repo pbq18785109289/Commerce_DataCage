@@ -16,6 +16,7 @@ import android.widget.TextView;
 import com.bumptech.glide.Glide;
 import com.dhcc.datacage.R;
 import com.dhcc.datacage.base.BaseActivity;
+import com.dhcc.datacage.view.ClearEditText;
 import com.dhcc.datacage.view.ExpandGridView;
 import com.pbq.pickerlib.activity.PhotoMediaActivity;
 import com.pbq.pickerlib.entity.PhotoVideoDir;
@@ -24,6 +25,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import butterknife.Bind;
+import butterknife.ButterKnife;
 import butterknife.OnClick;
 
 /**
@@ -36,13 +38,13 @@ public class VedioConference_Activity extends BaseActivity {
     @Bind(R.id.toolbar)
     Toolbar toolbar;
     @Bind(R.id.et_person)
-    EditText etPerson;
+    ClearEditText etPerson;
     @Bind(R.id.et_locate)
-    EditText etLocate;
+    ClearEditText etLocate;
     @Bind(R.id.et_content)
-    EditText etContent;
+    ClearEditText etContent;
     @Bind(R.id.et_time)
-    EditText etTime;
+    ClearEditText etTime;
     @Bind(R.id.btn_movie)
     Button btnMovie;
     @Bind(R.id.egv)
@@ -64,6 +66,7 @@ public class VedioConference_Activity extends BaseActivity {
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_workbench_conference);
+        ButterKnife.bind(this);
         initToolBar(toolbar,toolbarTitle,true,"音视频会议");
     }
 

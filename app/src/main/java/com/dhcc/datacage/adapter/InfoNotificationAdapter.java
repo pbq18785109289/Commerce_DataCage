@@ -28,7 +28,7 @@ public class InfoNotificationAdapter extends BaseRecyclerAdapter<InfoNotify, Rec
     @Override
     public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View view;
-        if (viewType == VIEW_TYPE) {
+        if (VIEW_TYPE == viewType) {
             view = inflater.inflate(R.layout.item_empty, parent, false);
             return new MyEmptyHolder(view);
         }

@@ -7,7 +7,8 @@ import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
-import android.widget.EditText;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.widget.TextView;
 
 import com.dhcc.datacage.R;
@@ -15,6 +16,7 @@ import com.dhcc.datacage.adapter.MyQueryAdapter;
 import com.dhcc.datacage.base.BaseActivity;
 import com.dhcc.datacage.listener.OnItemClickListener;
 import com.dhcc.datacage.model.Law;
+import com.miguelcatalan.materialsearchview.MaterialSearchView;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -22,6 +24,8 @@ import java.util.Random;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
+
+import static android.icu.lang.UCharacter.GraphemeClusterBreak.L;
 
 /**
  * Created by pengbangqin on 16-10-27.
@@ -32,15 +36,15 @@ public class IntegrateQuery_Activity extends BaseActivity {
     TextView toolbarTitle;
     @Bind(R.id.toolbar)
     Toolbar toolbar;
-    @Bind(R.id.et_query)
-    EditText etQuery;
     @Bind(R.id.rv)
     RecyclerView mRecyclerView;
     @Bind(R.id.swipe_refresh)
     SwipeRefreshLayout mSwipeRefresh;
+    @Bind(R.id.search_view)
+    MaterialSearchView searchView;
     private MyQueryAdapter adapter;
     List<Law> list = new ArrayList<>();
-    private Law[] laws={
+    private Law[] laws = {
             new Law("peng", "这是什么是?", "2016-10-27", "待办", "贵阳"),
             new Law("zsssa", "你知道他们么?", "2016-10-27", "待办", "贵阳"),
             new Law("sasa", "我还有事情?", "2016-10-27", "待办", "贵阳"),
@@ -71,6 +75,8 @@ public class IntegrateQuery_Activity extends BaseActivity {
                 refresh();
             }
         });
+        //初始化SearchView
+        initSearchView();
     }
 
     /**
@@ -106,9 +112,9 @@ public class IntegrateQuery_Activity extends BaseActivity {
      */
     private void initData() {
         list.clear();
-        for(int i=0;i<50;i++){
-            Random random=new Random();
-            int index=random.nextInt(laws.length);
+        for (int i = 0; i < 50; i++) {
+            Random random = new Random();
+            int index = random.nextInt(laws.length);
             list.add(laws[index]);
         }
     }
@@ -122,4 +128,87 @@ public class IntegrateQuery_Activity extends BaseActivity {
             showToast("dianji" + position);
         }
     };
+
+    /**
+     * 定义搜索框 搜索按钮
+     * @param menu
+     * @return
+     */
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.menu, menu);
+
+        MenuItem item = menu.findItem(R.id.action_search);
+        searchView.setMenuItem(item);
+
+        return true;
+    }
+    /**
+     * 初始化SearchView
+     */
+    private void initSearchView() {
+        //不是用语音搜索
+        searchView.setVoiceSearch(false);
+        searchView.setCursorDrawable(R.drawable.custom_cursor);
+        searchView.setEllipsize(true);
+        searchView.setOnQueryTextListener(new MaterialSearchView.OnQueryTextListener() {
+            @Override
+            public boolean onQueryTextSubmit(String query) {
+                return true;
+            }
+            @Override
+            public boolean onQueryTextChange(String newText) {
+                final List<Law> filteredModelList = filter(list, newText);
+                //reset
+                adapter.setFilter(filteredModelList);
+//                adapter.animateTo(filteredModelList);
+                mRecyclerView.scrollToPosition(0);
+                return true;
+            }
+        });
+        searchView.setOnSearchViewListener(new MaterialSearchView.SearchViewListener() {
+            @Override
+            public void onSearchViewShown() {
+            }
+
+            @Override
+            public void onSearchViewClosed() {
+                adapter.setFilter(list);
+            }
+        });
+    }
+
+    /**
+     * 筛选逻辑
+     * @param laws
+     * @param query
+     * @return
+     */
+    private List<Law> filter(List<Law> laws, String query) {
+        query = query.toLowerCase();
+
+        final List<Law> filteredModelList = new ArrayList<>();
+        for (Law law : laws) {
+            final String nameEn = law.getName().toLowerCase();
+            final String desEn = law.getDesc().toLowerCase();
+            final String name = law.getName();
+            final String des = law.getDesc();
+            if (name.contains(query) || des.contains(query) || nameEn.contains(query) || desEn.contains(query)) {
+                filteredModelList.add(law);
+            }
+        }
+        return filteredModelList;
+    }
+
+    /**
+     * 返回时关闭搜索
+     */
+    @Override
+    public void onBackPressed() {
+        if (searchView.isSearchOpen()) {
+            searchView.closeSearch();
+        } else {
+            super.onBackPressed();
+        }
+    }
 }
