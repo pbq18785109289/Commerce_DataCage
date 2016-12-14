@@ -74,7 +74,7 @@ public class OrderCorrect_Activity extends BaseActivity {
         mFab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Snackbar.make(mCoordinatorLayout, "点我分享哦！", Snackbar.LENGTH_SHORT).show();
+                showSnack(mCoordinatorLayout,"点我打印哦！");
             }
         });
     }

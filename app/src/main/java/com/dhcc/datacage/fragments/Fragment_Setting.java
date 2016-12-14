@@ -86,9 +86,9 @@ public class Fragment_Setting extends Fragment implements View.OnClickListener {
         // 判断GPS模块是否开启，如果没有则开启
         if (locationManager
                 .isProviderEnabled(LocationManager.GPS_PROVIDER)) {
-            tvCloseLocate.setRightString("已打开");
+            tvCloseLocate.setRightString("GPS已打开");
         } else {
-            tvCloseLocate.setRightString("GPS未打开");
+            tvCloseLocate.setRightString("GPS已关闭");
         }
     }
 

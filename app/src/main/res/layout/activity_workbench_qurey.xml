@@ -2,32 +2,39 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    android:background="#fff"
+    android:fitsSystemWindows="true"
+    android:background="@color/colorPrimary"
     >
-    <FrameLayout
-        android:id="@+id/toolbar_container"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content">
-        <!-- toolbar-->
-        <include layout="@layout/toolbar"/>
-
-        <com.miguelcatalan.materialsearchview.MaterialSearchView
-            android:id="@+id/search_view"
-            style="@style/MaterialSearchViewStyle"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content" />
-    </FrameLayout>
-    <android.support.v4.widget.SwipeRefreshLayout
-        android:id="@+id/swipe_refresh"
+    <LinearLayout
+        android:background="#fff"
+        android:orientation="vertical"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
-        <android.support.v7.widget.RecyclerView
-            android:layout_marginRight="5dp"
-            android:layout_marginLeft="5dp"
-            android:id="@+id/rv"
-            android:layout_centerVertical="true"
-            android:layout_centerHorizontal="true"
+        <FrameLayout
+            android:id="@+id/toolbar_container"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"/>
-    </android.support.v4.widget.SwipeRefreshLayout>
+            android:layout_height="wrap_content">
+            <!-- toolbar-->
+            <include layout="@layout/toolbar"/>
+
+            <com.miguelcatalan.materialsearchview.MaterialSearchView
+                android:id="@+id/search_view"
+                style="@style/MaterialSearchViewStyle"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" />
+        </FrameLayout>
+        <android.support.v4.widget.SwipeRefreshLayout
+            android:id="@+id/swipe_refresh"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+            <android.support.v7.widget.RecyclerView
+                android:layout_marginRight="5dp"
+                android:layout_marginLeft="5dp"
+                android:id="@+id/rv"
+                android:layout_centerVertical="true"
+                android:layout_centerHorizontal="true"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"/>
+        </android.support.v4.widget.SwipeRefreshLayout>
+    </LinearLayout>
 </LinearLayout>

@@ -10,16 +10,12 @@ import android.view.ViewGroup;
 import com.allen.supertextviewlibrary.SuperTextView;
 import com.dhcc.datacage.R;
 import com.dhcc.datacage.activity.synergy.TeamWork_Activity;
-import com.dhcc.datacage.utils.DataUtil;
-
 import butterknife.Bind;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
-import butterknife.OnItemClick;
 
 /**
  * 协同Fragment
- *
  * @author pengbangqin
  */
 public class Fragment_Synerg extends Fragment {

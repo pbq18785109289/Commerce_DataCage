@@ -27,7 +27,6 @@ import butterknife.OnClick;
 import okhttp3.Call;
 import okhttp3.Response;
 
-import static android.R.attr.name;
 
 /**
  * Created by pengbangqin on 16-10-27.
@@ -157,7 +156,7 @@ public class LoginActivity extends BaseActivity {
                     @Override
                     public void onError(Call call, Response response, Exception e) {
                         super.onError(call, response, e);
-                        showToast("登录失败");
+//                        showToast("登录失败");
                     }
                 });
     }

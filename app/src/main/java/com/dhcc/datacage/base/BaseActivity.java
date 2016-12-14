@@ -13,7 +13,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 import com.dhcc.datacage.R;
 import com.dhcc.datacage.utils.SnackbarUtils;
-import com.jaeger.library.StatusBarUtil;
+import com.dhcc.datacage.view.StatusBarCompat;
 
 /**
  * Created by pengbangqin on 16-11-9.
@@ -23,18 +23,43 @@ public abstract class BaseActivity extends AppCompatActivity{
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        ActivityCollector.addActivity(this);
     }
 
     @Override
     public void setContentView(@LayoutRes int layoutResID) {
+        StatusBarCompat.compat(this,getColorPrimary());
         super.setContentView(layoutResID);
-        StatusBarUtil.setTranslucent(this,60);
     }
     @Override
     public void setContentView(View view) {
+        StatusBarCompat.compat(this,getColorPrimary());
         super.setContentView(view);
     }
 
+    /** 设置状态栏颜色 */
+//    protected void initSystemBarTint() {
+//        Window window = getWindow();
+//        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+//            window.clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS
+//                    | WindowManager.LayoutParams.FLAG_TRANSLUCENT_NAVIGATION);
+//            window.getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
+//                    | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
+//                    | View.SYSTEM_UI_FLAG_LAYOUT_STABLE);
+//            window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
+//            window.setStatusBarColor(Color.TRANSPARENT);
+//            window.setNavigationBarColor(Color.TRANSPARENT);
+//        }
+//        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+//            window.setFlags(
+//                    WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS,
+//                    WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
+//        }
+//    }
+    /** 子类可以重写改变状态栏颜色 */
+    protected int setStatusBarColor() {
+        return getColorPrimary();
+    }
     /** 初始化 Toolbar */
     public void initToolBar(Toolbar toolbar, TextView toolbarTitle, boolean homeAsUpEnabled, String title) {
         toolbar.setTitle("");
@@ -83,5 +108,11 @@ public abstract class BaseActivity extends AppCompatActivity{
         if (dialog != null && dialog.isShowing()) {
             dialog.dismiss();
         }
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        ActivityCollector.removeActivity(this);
     }
 }

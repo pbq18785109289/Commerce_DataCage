@@ -161,4 +161,5 @@ public class VedioConference_Activity extends BaseActivity {
             imageView.setLayoutParams(params);
         }
     }
+
 }

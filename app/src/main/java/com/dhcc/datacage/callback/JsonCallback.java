@@ -1,13 +1,10 @@
 package com.dhcc.datacage.callback;
 
-import android.util.JsonReader;
-
 import com.dhcc.datacage.model.DhcResponse;
 import com.dhcc.datacage.model.SimpleResponse;
 import com.dhcc.datacage.utils.Convert;
 import com.lzy.okgo.callback.AbsCallback;
 import com.lzy.okgo.request.BaseRequest;
-
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 

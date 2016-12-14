@@ -1,7 +1,7 @@
 package com.dhcc.datacage.activity;
 
-import android.content.Intent;
 import android.os.Bundle;
+import android.os.Process;
 import android.support.annotation.NonNull;
 import android.support.design.widget.NavigationView;
 import android.support.v4.app.Fragment;
@@ -9,7 +9,6 @@ import android.support.v4.app.FragmentTransaction;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBar;
-import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
 import android.widget.FrameLayout;
@@ -17,20 +16,16 @@ import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.TextView;
 import android.widget.Toast;
-
 import com.dhcc.datacage.R;
+import com.dhcc.datacage.base.ActivityCollector;
 import com.dhcc.datacage.base.BaseActivity;
 import com.dhcc.datacage.fragments.Fragment_Setting;
 import com.dhcc.datacage.fragments.Fragment_Synerg;
 import com.dhcc.datacage.fragments.Fragment_Workbench;
-import com.jaeger.library.StatusBarUtil;
-
 import java.util.ArrayList;
 import java.util.List;
-
 import butterknife.Bind;
 import butterknife.ButterKnife;
-
 import static com.dhcc.datacage.R.id.toolbar_title;
 
 
@@ -39,7 +34,7 @@ import static com.dhcc.datacage.R.id.toolbar_title;
  *
  * @author pengbangqin
  */
-public class MainActivity extends AppCompatActivity implements RadioGroup.OnCheckedChangeListener {
+public class MainActivity extends BaseActivity implements RadioGroup.OnCheckedChangeListener {
     @Bind(toolbar_title)
     TextView toolbarTitle;
     @Bind(R.id.toolbar)
@@ -73,7 +68,6 @@ public class MainActivity extends AppCompatActivity implements RadioGroup.OnChec
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         ButterKnife.bind(this);
-        StatusBarUtil.setTranslucent(this,60);
         //使用toolbar代替ActionBar,是外观和功能一致
         setSupportActionBar(toolbar);
         ActionBar actionBar=getSupportActionBar();
@@ -172,15 +166,17 @@ public class MainActivity extends AppCompatActivity implements RadioGroup.OnChec
             Toast.makeText(this, "再按一次退出", Toast.LENGTH_SHORT).show();
             mExitTime = System.currentTimeMillis();
         } else {
-            finish();//结束当前Activity
-            Intent startMain = new Intent(Intent.ACTION_MAIN);
-            startMain.addCategory(Intent.CATEGORY_HOME);
-            startMain.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-            startActivity(startMain);
-            System.exit(0);// 退出程序
+            ActivityCollector.finishAll();
+            //杀死当前进程
+            Process.killProcess(Process.myPid());
+//            finish();//结束当前Activity
+//            Intent startMain = new Intent(Intent.ACTION_MAIN);
+//            startMain.addCategory(Intent.CATEGORY_HOME);
+//            startMain.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+//            startActivity(startMain);
+//            System.exit(0);// 退出程序
         }
     }
-
     /**
      * 重写onOptionsItemSelected
      * 点击home弹出侧滑菜单

@@ -2,16 +2,24 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@color/colorPrimary"
+    android:fitsSystemWindows="true"
     android:orientation="vertical" >
-    <!-- toolbar-->
-    <include layout="@layout/toolbar"/>
-    <android.support.v4.widget.SwipeRefreshLayout
-        android:id="@+id/swipe_refresh"
+    <LinearLayout
+        android:background="#fff"
+        android:orientation="vertical"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
-    <android.support.v7.widget.RecyclerView
-        android:id="@+id/rv"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"/>
-    </android.support.v4.widget.SwipeRefreshLayout>
+        <!-- toolbar-->
+        <include layout="@layout/toolbar"/>
+        <android.support.v4.widget.SwipeRefreshLayout
+            android:id="@+id/swipe_refresh"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+            <android.support.v7.widget.RecyclerView
+                android:id="@+id/rv"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"/>
+        </android.support.v4.widget.SwipeRefreshLayout>
+    </LinearLayout>
 </LinearLayout>
