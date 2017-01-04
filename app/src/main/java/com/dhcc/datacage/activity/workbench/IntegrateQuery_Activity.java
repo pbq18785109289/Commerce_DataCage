@@ -12,20 +12,18 @@ import android.view.MenuItem;
 import android.widget.TextView;
 
 import com.dhcc.datacage.R;
-import com.dhcc.datacage.adapter.MyQueryAdapter;
+import com.dhcc.datacage.adapter.MyDoAdapter;
 import com.dhcc.datacage.base.BaseActivity;
 import com.dhcc.datacage.listener.OnItemClickListener;
-import com.dhcc.datacage.model.Law;
+import com.dhcc.datacage.model.InfoNotify;
 import com.miguelcatalan.materialsearchview.MaterialSearchView;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Random;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
 
-import static android.icu.lang.UCharacter.GraphemeClusterBreak.L;
 
 /**
  * Created by pengbangqin on 16-10-27.
@@ -42,17 +40,8 @@ public class IntegrateQuery_Activity extends BaseActivity {
     SwipeRefreshLayout mSwipeRefresh;
     @Bind(R.id.search_view)
     MaterialSearchView searchView;
-    private MyQueryAdapter adapter;
-    List<Law> list = new ArrayList<>();
-    private Law[] laws = {
-            new Law("peng", "这是什么是?", "2016-10-27", "待办", "贵阳"),
-            new Law("zsssa", "你知道他们么?", "2016-10-27", "待办", "贵阳"),
-            new Law("sasa", "我还有事情?", "2016-10-27", "待办", "贵阳"),
-            new Law("qqwqw", "请不啊哟找我?", "2016-10-27", "待办", "贵阳"),
-            new Law("uyt", "这只是个而是?", "2016-10-27", "待办", "贵阳"),
-            new Law("yuun", "是个测试哦?", "2016-10-27", "待办", "贵阳"),
-            new Law("llll", "我还有事情没办呢?", "2016-10-27", "待办", "贵阳")
-    };
+    private MyDoAdapter adapter;
+    List<InfoNotify> list = new ArrayList<>();
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -64,7 +53,7 @@ public class IntegrateQuery_Activity extends BaseActivity {
         mRecyclerView.setLayoutManager(new LinearLayoutManager(this));// 布局管理器。
         mRecyclerView.setHasFixedSize(true);// 如果Item够简单，高度是确定的，打开FixSize将提高性能。
         mRecyclerView.setItemAnimator(new DefaultItemAnimator());// 设置Item默认动画，加也行，不加也行
-        adapter = new MyQueryAdapter(this, list);
+        adapter = new MyDoAdapter(this, list);
         adapter.setOnItemClickListener(onItemClickListener);
         mRecyclerView.setAdapter(adapter);
         //设置下拉刷新进度条的颜色
@@ -96,7 +85,7 @@ public class IntegrateQuery_Activity extends BaseActivity {
                     @Override
                     public void run() {
                         //重新生成数据
-                        initData();
+//                        initData();
                         //通知数据发生了变化
                         adapter.notifyDataSetChanged();
                         //刷新事件结束 并隐藏刷新进度条
@@ -111,13 +100,26 @@ public class IntegrateQuery_Activity extends BaseActivity {
      * 获取数据  测试随机挑选50中,保证每次都不一样
      */
     private void initData() {
-        list.clear();
-        for (int i = 0; i < 50; i++) {
-            Random random = new Random();
-            int index = random.nextInt(laws.length);
-            list.add(laws[index]);
-        }
+        list.add(new InfoNotify("贵阳市云岩区某某超市","经群众举报,该超市发现存在卫生不合格,需尽快处理","2016-12-01"));
+        list.add(new InfoNotify("贵阳市云岩区某某美发店","该店发现违规行为,请尽快处理","2016-12-03"));
+        list.add(new InfoNotify("贵阳市云岩区某某KTV","经群众举报,该KTV存在乱收费行为,请相关人员调查处理","2016-12-05"));
+        list.add(new InfoNotify("贵阳市乌当区某某鸡排","发现该店员工偷工减料,需尽快处理","2016-12-06"));
+        list.add(new InfoNotify("贵阳市花溪区某某化妆品","发现该店的化妆品不合格,需尽快处理","2016-12-07"));
+        list.add(new InfoNotify("贵阳市某某超市","卫生情况已处理","2016-12-01"));
+        list.add(new InfoNotify("贵阳市某某美发店","违规行为已处理","2016-12-03"));
+        list.add(new InfoNotify("贵阳市某某KTV","已调查处理","2016-12-05"));
+        list.add(new InfoNotify("贵阳市某某网咖","安全隐患已核实","2016-12-13"));
+        list.add(new InfoNotify("贵阳市小河区某某网咖","发现该店的机子存在安全隐患,请相关人员调查核实","2016-12-13"));
+        list.add(new InfoNotify("贵阳市南明区某某某某超市","经群众举报,该超市乱收费情况严重,需尽快处理","2016-12-14"));
     }
+//    private void initData() {
+//        list.clear();
+//        for (int i = 0; i < 50; i++) {
+//            Random random = new Random();
+//            int index = random.nextInt(laws.length);
+//            list.add(laws[index]);
+//        }
+//    }
 
     /**
      * item的点击事件
@@ -158,7 +160,7 @@ public class IntegrateQuery_Activity extends BaseActivity {
             }
             @Override
             public boolean onQueryTextChange(String newText) {
-                final List<Law> filteredModelList = filter(list, newText);
+                final List<InfoNotify> filteredModelList = filter(list, newText);
                 //reset
                 adapter.setFilter(filteredModelList);
 //                adapter.animateTo(filteredModelList);
@@ -184,17 +186,17 @@ public class IntegrateQuery_Activity extends BaseActivity {
      * @param query
      * @return
      */
-    private List<Law> filter(List<Law> laws, String query) {
+    private List<InfoNotify> filter(List<InfoNotify> laws, String query) {
         query = query.toLowerCase();
 
-        final List<Law> filteredModelList = new ArrayList<>();
-        for (Law law : laws) {
-            final String nameEn = law.getName().toLowerCase();
-            final String desEn = law.getDesc().toLowerCase();
-            final String name = law.getName();
-            final String des = law.getDesc();
+        final List<InfoNotify> filteredModelList = new ArrayList<>();
+        for (InfoNotify notify : laws) {
+            final String nameEn = notify.getTitle().toLowerCase();
+            final String desEn = notify.getMessage().toLowerCase();
+            final String name = notify.getTitle();
+            final String des = notify.getMessage();
             if (name.contains(query) || des.contains(query) || nameEn.contains(query) || desEn.contains(query)) {
-                filteredModelList.add(law);
+                filteredModelList.add(notify);
             }
         }
         return filteredModelList;
@@ -211,4 +213,5 @@ public class IntegrateQuery_Activity extends BaseActivity {
             super.onBackPressed();
         }
     }
+
 }

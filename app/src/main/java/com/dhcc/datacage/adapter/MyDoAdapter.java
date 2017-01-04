@@ -10,7 +10,6 @@ import com.dhcc.datacage.R;
 import com.dhcc.datacage.base.BaseRecyclerAdapter;
 import com.dhcc.datacage.client.NotificationHistory;
 import com.dhcc.datacage.model.InfoNotify;
-import com.dhcc.datacage.model.Law;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -22,9 +21,9 @@ import butterknife.ButterKnife;
  * Created by pengbangqin on 2016/12/5.
  * 工作台中消息通知的Adapter
  */
-public class InfoNotificationAdapter extends BaseRecyclerAdapter<NotificationHistory, RecyclerView.ViewHolder> {
+public class MyDoAdapter extends BaseRecyclerAdapter<InfoNotify, RecyclerView.ViewHolder> {
 
-    public InfoNotificationAdapter(Context context, List<NotificationHistory> datas) {
+    public MyDoAdapter(Context context, List<InfoNotify> datas) {
         super(context, datas);
     }
 
@@ -42,7 +41,7 @@ public class InfoNotificationAdapter extends BaseRecyclerAdapter<NotificationHis
     @Override
     public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
         if (holder instanceof MyViewHolder) {
-            NotificationHistory infoNotify= mDatas.get(position);
+            InfoNotify infoNotify= mDatas.get(position);
             ((MyViewHolder) holder).setOnItemClickListener(mOnItemClickListener);
             ((MyViewHolder) holder).tvTitle.setText(infoNotify.getTitle());
             ((MyViewHolder) holder).tvMessage.setText(infoNotify.getMessage());
@@ -68,7 +67,7 @@ public class InfoNotificationAdapter extends BaseRecyclerAdapter<NotificationHis
      * 筛选后的list  到时删除
      * @param laws
      */
-    public void setFilter(List<NotificationHistory> laws) {
+    public void setFilter(List<InfoNotify> laws) {
         mDatas = new ArrayList<>();
         mDatas.addAll(laws);
         notifyDataSetChanged();

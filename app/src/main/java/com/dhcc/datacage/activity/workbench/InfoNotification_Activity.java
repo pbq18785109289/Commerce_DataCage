@@ -7,25 +7,21 @@ import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.widget.TextView;
-
 import com.dhcc.datacage.R;
 import com.dhcc.datacage.adapter.InfoNotificationAdapter;
 import com.dhcc.datacage.base.BaseActivity;
-import com.dhcc.datacage.base.DividerItemDecoration;
-import com.dhcc.datacage.model.InfoNotify;
+import com.dhcc.datacage.client.NotificationHistory;
 
-import java.text.SimpleDateFormat;
+import org.litepal.crud.DataSupport;
+
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
-
 import butterknife.Bind;
 import butterknife.ButterKnife;
-import cn.jpush.android.api.JPushInterface;
 
 /**
+ * 历史消息通知
  * Created by pengbangqin on 2016/12/5.
  */
 
@@ -37,7 +33,7 @@ public class InfoNotification_Activity extends BaseActivity {
     @Bind(R.id.toolbar)
     Toolbar toolbar;
     private InfoNotificationAdapter adapter;
-    List<InfoNotify> list;
+    private List<NotificationHistory> mList = new ArrayList<NotificationHistory>();
     Bundle bundle;
 
     @Override
@@ -46,31 +42,9 @@ public class InfoNotification_Activity extends BaseActivity {
         setContentView(R.layout.activity_workbench_info);
         ButterKnife.bind(this);
         initToolBar(toolbar,toolbarTitle,true,"消息通知");
-        bundle=getIntent().getExtras();
-        if(bundle!=null){
-            initData();
-        }
+        //获取数据库中的数据
+        mList = DataSupport.findAll(NotificationHistory.class);
         init();
-    }
-
-    /**
-     * 初始化数据
-     */
-    private void initData() {
-        list=new ArrayList<>();
-        String title = bundle.getString(JPushInterface.EXTRA_NOTIFICATION_TITLE);
-        Log.d("zll", " title : " + title);
-        String message = bundle.getString(JPushInterface.EXTRA_ALERT);
-        Log.d("zll", "message : " + message);
-        //设置日期格式
-        SimpleDateFormat format=new SimpleDateFormat("yy-MM-dd HH:mm:ss");
-        String time=format.format(new Date());
-        //将收到的消息装入实体类InfoNotify中
-        InfoNotify notify=new InfoNotify();
-        notify.setTitle(title);
-        notify.setMessage(message);
-        notify.setTime(time);
-        list.add(notify);
     }
 
     /**
@@ -83,7 +57,7 @@ public class InfoNotification_Activity extends BaseActivity {
         mRecyclerview.setLayoutManager(new LinearLayoutManager(this));
         //设置默认动画
         mRecyclerview.setItemAnimator(new DefaultItemAnimator());
-        adapter=new InfoNotificationAdapter(this, list);
+        adapter=new InfoNotificationAdapter(this, mList);
         mRecyclerview.setAdapter(adapter);
     }
 }

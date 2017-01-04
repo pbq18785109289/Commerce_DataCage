@@ -10,6 +10,8 @@ import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBar;
 import android.support.v7.widget.Toolbar;
+import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.widget.FrameLayout;
 import android.widget.RadioButton;
@@ -19,6 +21,7 @@ import android.widget.Toast;
 import com.dhcc.datacage.R;
 import com.dhcc.datacage.base.ActivityCollector;
 import com.dhcc.datacage.base.BaseActivity;
+import com.dhcc.datacage.client.ServiceManager;
 import com.dhcc.datacage.fragments.Fragment_Setting;
 import com.dhcc.datacage.fragments.Fragment_Synerg;
 import com.dhcc.datacage.fragments.Fragment_Workbench;
@@ -54,6 +57,7 @@ public class MainActivity extends BaseActivity implements RadioGroup.OnCheckedCh
     @Bind(R.id.drawerlayoout)
     DrawerLayout mDrawerlayoout;
     private List<Fragment> list;
+
     /**
      * 选中的Fragment的对应的位置
      */
@@ -84,6 +88,13 @@ public class MainActivity extends BaseActivity implements RadioGroup.OnCheckedCh
         rg.setOnCheckedChangeListener(this);
         //设置默认选中第一个
         rg.check(R.id.rb_workbench);
+
+        //开启推送服务器
+        ServiceManager serviceManager = new ServiceManager(this);
+        serviceManager.setNotificationIcon(R.mipmap.logo);
+        serviceManager.startService();
+        //设置别名
+        serviceManager.setAlias("pbq");
     }
 
     /**
@@ -177,6 +188,14 @@ public class MainActivity extends BaseActivity implements RadioGroup.OnCheckedCh
 //            System.exit(0);// 退出程序
         }
     }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        MenuInflater inflater=getMenuInflater();
+        inflater.inflate(R.menu.main_menu,menu);
+        return true;
+    }
+
     /**
      * 重写onOptionsItemSelected
      * 点击home弹出侧滑菜单
@@ -190,6 +209,10 @@ public class MainActivity extends BaseActivity implements RadioGroup.OnCheckedCh
             case android.R.id.home:
                 //展示滑动菜单
                 mDrawerlayoout.openDrawer(GravityCompat.START);
+                break;
+            case R.id.setting:
+                //打开推送设置
+                ServiceManager.viewNotificationSettings(MainActivity.this);
                 break;
         }
         return true;

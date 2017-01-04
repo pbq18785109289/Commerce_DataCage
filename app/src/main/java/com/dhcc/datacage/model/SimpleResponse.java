@@ -8,12 +8,12 @@ import java.io.Serializable;
 public class SimpleResponse implements Serializable {
 
     public String code;
-    public String uid;
+    public String msg;
 
     public DhcResponse toDhcResponse() {
-        DhcResponse lzyResponse = new DhcResponse();
-        lzyResponse.code = code;
-        lzyResponse.msg = uid;
-        return lzyResponse;
+        DhcResponse dhcResponse = new DhcResponse();
+        dhcResponse.code = code;
+        dhcResponse.msg = msg;
+        return dhcResponse;
     }
 }

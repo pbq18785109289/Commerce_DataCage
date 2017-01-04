@@ -1,5 +1,6 @@
 package com.dhcc.datacage.fragments;
 
+import android.Manifest;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -7,6 +8,7 @@ import android.content.SharedPreferences;
 import android.location.LocationManager;
 import android.os.Bundle;
 import android.provider.Settings;
+import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.AlertDialog;
 import android.util.Log;
@@ -21,9 +23,14 @@ import com.dhcc.datacage.R;
 import com.dhcc.datacage.activity.LoginActivity;
 import com.dhcc.datacage.activity.MainActivity;
 import com.dhcc.datacage.activity.setting.UpdatePwd_Activity;
-import com.dhcc.datacage.utils.DataClearManager;
+import com.dhcc.datacage.utils.DataCleanUtil;
 import com.dhcc.datacage.utils.MyApp;
 import com.dhcc.datacage.utils.SnackbarUtils;
+import com.yanzhenjie.permission.AndPermission;
+import com.yanzhenjie.permission.PermissionNo;
+import com.yanzhenjie.permission.PermissionYes;
+import com.yanzhenjie.permission.Rationale;
+import com.yanzhenjie.permission.RationaleListener;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
@@ -71,7 +78,8 @@ public class Fragment_Setting extends Fragment implements View.OnClickListener {
      */
     private void getCacheSize() {
         try {
-            tvClearCache.setRightString(DataClearManager.getTotalCacheSize(getActivity()));
+            String size= DataCleanUtil.getTotalCacheSize(getActivity());
+            tvClearCache.setRightString(size);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -109,7 +117,7 @@ public class Fragment_Setting extends Fragment implements View.OnClickListener {
                 showClearDialog();
                 break;
             case R.id.tv_closeLocate:
-                closeGPS();
+                requestLocationPermission();
                 break;
             case R.id.tv_version_update:
                 showUpdateDialog();
@@ -119,6 +127,7 @@ public class Fragment_Setting extends Fragment implements View.OnClickListener {
                 break;
         }
     }
+
     /**
      * 弹出版本更新对话框
      */
@@ -148,11 +157,17 @@ public class Fragment_Setting extends Fragment implements View.OnClickListener {
                 .setPositiveButton("确认", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-                       //清除操作
-                        DataClearManager.clearAllCache(getActivity());
+                        try {
+                            //清除操作
+                            DataCleanUtil.clearAllCache(getActivity());
 //                        DataClearManager.cleanApplicationData(getActivity(),"");
-                        getCacheSize();
-                        SnackbarUtils.Long(tvExit,"缓存清除成功").backColor(getColorPrimary()).show();
+                            String size=DataCleanUtil.getTotalCacheSize(getActivity());
+                            tvClearCache.setRightString(size);
+//                        getCacheSize();
+                            SnackbarUtils.Long(tvExit,"缓存清除成功").backColor(getColorPrimary()).show();
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
                     }
                 }).create().show();
     }
@@ -191,6 +206,59 @@ public class Fragment_Setting extends Fragment implements View.OnClickListener {
                         startActivity(startMain);
                     }
               }).create().show();
+    }
+
+    /**
+     * 申请SD卡权限，单个的。
+     */
+    private void requestLocationPermission() {
+        AndPermission.with(this)
+                .requestCode(100)
+                .permission(Manifest.permission.ACCESS_FINE_LOCATION)
+                .rationale(rationaleListener)
+                .send();
+    }
+
+    private RationaleListener rationaleListener = new RationaleListener() {
+        @Override
+        public void showRequestPermissionRationale(int requestCode, final Rationale rationale) {
+            new AlertDialog.Builder(getActivity())
+                    .setTitle("友好提醒")
+                    .setMessage("您已拒绝过定位权限，没有定位权限无法为您推荐附近妹子，请把定位权限赐给我吧！")
+                    .setPositiveButton("好，给你", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            dialog.cancel();
+                            rationale.resume();
+                        }
+                    })
+                    .setNegativeButton("我拒绝", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            dialog.cancel();
+                            rationale.cancel();
+                        }
+                    }).show();
+        }
+    };
+
+    @PermissionYes(100)
+    private void getLocationYes() {
+        closeGPS();
+        Toast.makeText(getActivity(), "获取定位权限成功", Toast.LENGTH_SHORT).show();
+    }
+
+    @PermissionNo(100)
+    private void getLocationNo() {
+        Toast.makeText(getActivity(), "获取定位权限失败", Toast.LENGTH_SHORT).show();
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        // 这个Activity中没有Fragment，这句话可以注释。
+        // super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+
+        AndPermission.onRequestPermissionsResult(this, requestCode, permissions, grantResults);
     }
 
     @Override

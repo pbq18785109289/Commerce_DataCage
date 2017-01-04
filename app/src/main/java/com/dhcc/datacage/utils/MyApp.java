@@ -1,17 +1,15 @@
 package com.dhcc.datacage.utils;
 
 import android.app.Application;
-
+import android.content.Context;
 import com.lzy.okgo.OkGo;
 import com.lzy.okgo.cache.CacheEntity;
 import com.lzy.okgo.cache.CacheMode;
 import com.lzy.okgo.cookie.store.PersistentCookieStore;
 import com.lzy.okgo.model.HttpHeaders;
 import com.lzy.okgo.model.HttpParams;
-
+import org.litepal.LitePal;
 import java.util.logging.Level;
-
-import cn.jpush.android.api.JPushInterface;
 
 /**
  * Created by pengbangqin on 16-10-28.
@@ -22,12 +20,24 @@ public class MyApp extends Application{
      * 是: 跳转到登录界面
      */
     public static Boolean isExitLogin=false;
+    /**
+     * 定义全局的context
+     */
+    private static Context context;
+
+    /**
+     * 获取全局的Context
+     * @return
+     */
+    public static Context getContext(){
+        return context;
+    }
     @Override
     public void onCreate() {
         super.onCreate();
-        JPushInterface.setDebugMode(true); 	// 设置开启日志,发布时请关闭日志
-        JPushInterface.init(this);     		// 初始化 JPush
-
+        context=getApplicationContext();
+        //litepal数据库的初始化
+        LitePal.initialize(this);
         //---------这里给出的是示例代码,告诉你可以这么传,实际使用的时候,根据需要传,不需要就不传-------------//
         HttpHeaders headers = new HttpHeaders();
         headers.put("commonHeaderKey1", "commonHeaderValue1");    //header不支持中文

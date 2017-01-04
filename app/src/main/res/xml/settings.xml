@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <CheckBoxPreference
+        android:key="checkbox"
+        android:summary="开机启动服务"
+        android:title="开机启动" />
+    <CheckBoxPreference
+        android:key="checkbox"
+        android:summary="收到推送消息时播放声音"
+        android:title="声音" />
+    <CheckBoxPreference
+        android:key="checkbox"
+        android:summary="收到推送消息时手机振动"
+        android:title="开机启动" />
+</PreferenceScreen>

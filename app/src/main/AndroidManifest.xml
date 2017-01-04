@@ -2,34 +2,21 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.dhcc.datacage">
 
-    <!-- Required  一些系统要求的权限，如访问网络等 -->
-    <uses-permission android:name="com.dhcc.datacage.permission.JPUSH_MESSAGE" />
-    <uses-permission android:name="android.permission.RECEIVE_USER_PRESENT" />
-    <uses-permission android:name="android.permission.INTERNET" />
-    <uses-permission android:name="android.permission.WAKE_LOCK" />
+    <!-- 推送需要权限 读取手机状态 危险权限 -->
     <uses-permission android:name="android.permission.READ_PHONE_STATE" />
-    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
-    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
-    <uses-permission android:name="android.permission.WRITE_SETTINGS" />
-    <uses-permission android:name="android.permission.VIBRATE" />
-    <uses-permission android:name="android.permission.MOUNT_UNMOUNT_FILESYSTEMS" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
-
-    <!-- Optional. Required for location feature -->
-    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
     <uses-permission android:name="android.permission.CHANGE_WIFI_STATE" />
+    <uses-permission android:name="android.permission.VIBRATE" />
+    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
+    <!-- 定位需要权限 危险权限 6.0以上需要申请 -->
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
     <uses-permission android:name="android.permission.ACCESS_LOCATION_EXTRA_COMMANDS" />
-    <uses-permission android:name="android.permission.CHANGE_NETWORK_STATE" />
-    <uses-permission android:name="android.permission.GET_TASKS" />
-    <uses-permission android:name="com.android.launcher.permission.READ_SETTINGS" />
-    <!-- 用于访问wifi网络信息，wifi信息会用于进行网络定位 -->
-    <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
-    <!-- 获取运营商信息，用于支持提供运营商信息相关的接口 -->
-    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
-    <!-- 用于读取手机当前的状态 -->
-    <uses-permission android:name="android.permission.READ_PHONE_STATE" />
+
+    <!-- 读写sd卡 危险权限 -->
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"/>
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
 
     <application
         android:name=".utils.MyApp"
@@ -38,7 +25,8 @@
         android:label="@string/app_name"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".activity.LoginActivity">
+        <activity android:name=".activity.LoginActivity"
+            android:theme="@style/Appwelcome">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -47,13 +35,16 @@
         </activity>
         <!-- 主界面 -->
         <activity android:name=".activity.MainActivity" />
-
         <!-- 检查 -->
-        <activity android:name=".activity.law.Check_Activity" />
+        <activity android:name=".activity.law.Check_Activity" android:windowSoftInputMode="adjustPan"/>
 
         <!-- 工作台模块 -->
         <!-- 消息通知 -->
         <activity android:name=".activity.workbench.InfoNotification_Activity" />
+        <!-- 我的待办 -->
+        <activity android:name=".activity.workbench.MyDoing_Activity"/>
+        <!-- 我的已办 -->
+        <activity android:name=".activity.workbench.MyDone_Activity"/>
         <!-- 音视频会议 -->
         <activity
             android:name=".activity.workbench.VedioConference_Activity"
@@ -75,33 +66,21 @@
         <activity
             android:name=".activity.setting.UpdatePwd_Activity"
             android:windowSoftInputMode="adjustPan" />
-
-        <!-- User defined. 用户自定义的广播接收器 -->
-        <receiver
-            android:name=".receiver.MyReceiver"
-            android:enabled="true">
-            <intent-filter>
-
-                <!-- Required 用户注册SDK的intent -->
-                <action android:name="cn.jpush.android.intent.REGISTRATION" />
-                <!-- Required 用户接收SDK消息的intent -->
-                <action android:name="cn.jpush.android.intent.MESSAGE_RECEIVED" />
-                <!-- Required 用户接收SDK通知栏信息的intent -->
-                <action android:name="cn.jpush.android.intent.NOTIFICATION_RECEIVED" />
-                <!-- Required 用户打开自定义通知栏的intent -->
-                <action android:name="cn.jpush.android.intent.NOTIFICATION_OPENED" />
-                <!-- 接收网络变化 连接/断开 since 1.6.3 -->
-                <action android:name="cn.jpush.android.intent.CONNECTION" />
-
-                <category android:name="com.dhcc.datacage" />
-            </intent-filter>
-        </receiver>
-        <receiver
-            android:name=".receiver.NetworkChangeReceiver"
+        <!-- 推送的Activity -->
+        <activity android:name=".client.NotificationDetailsActivity"
+            android:label="Notification Details">
+        </activity>
+        <activity android:name=".client.NotificationSettingsActivity"
+            android:label="Notification Settings">
+        </activity>
+        <service
             android:enabled="true"
-            android:exported="true">
+            android:exported="true"
+            android:name=".client.NotificationService">
+        </service>
+        <receiver android:name=".client.BootCompletedReceiver" >
             <intent-filter>
-                <action android:name="android.net.conn.CONNECTIVITY_CHANGE"/>
+                <action android:name="android.intent.action.BOOT_COMPLETED" />
             </intent-filter>
         </receiver>
     </application>

@@ -1,29 +1,32 @@
 package com.dhcc.datacage.activity.workbench;
 
 import android.content.Intent;
+import android.graphics.Color;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
+import android.view.Gravity;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.Button;
-import android.widget.EditText;
 import android.widget.FrameLayout;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 import com.bumptech.glide.Glide;
 import com.dhcc.datacage.R;
 import com.dhcc.datacage.base.BaseActivity;
 import com.dhcc.datacage.view.ClearEditText;
-import com.dhcc.datacage.view.ExpandGridView;
-import com.pbq.pickerlib.activity.PhotoMediaActivity;
-import com.pbq.pickerlib.entity.PhotoVideoDir;
+import com.lzy.widget.ExpandGridView;
+import com.pbq.imagepicker.VideoPicker;
+import com.pbq.imagepicker.bean.VideoItem;
+import com.pbq.imagepicker.ui.video.VideoGridActivity;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
-
 import butterknife.Bind;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
@@ -72,21 +75,14 @@ public class VedioConference_Activity extends BaseActivity {
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if (resultCode == RESULT_OK) {
-            selectedVedioPaths = data.getStringArrayListExtra("pickerPaths");
-            MyAdapter adapter = new MyAdapter(selectedVedioPaths);
-            egv.setAdapter(adapter);
-            //将选择的视频路径放入文件中
-            //清空视频文件
-            files.clear();
-            for (int i = 0; i < selectedVedioPaths.size(); i++) {
-                File fileVedio = new File(selectedVedioPaths.get(i));
-                files.add(fileVedio);
-                Log.i("TGA", selectedVedioPaths.get(i));
-                Log.i("TGA", fileVedio + "");
+        if (resultCode == VideoPicker.RESULT_VIDEO_ITEMS) {
+            if (data != null && requestCode == 300) {
+                ArrayList<VideoItem> videos = (ArrayList<VideoItem>) data.getSerializableExtra(VideoPicker.EXTRA_RESULT_VIDEO_ITEMS);
+                MyVideoAdapter adapter = new MyVideoAdapter(videos);
+                egv.setAdapter(adapter);
+            } else {
+                Toast.makeText(this, "没有数据", Toast.LENGTH_SHORT).show();
             }
-            //上传
-            showToast(selectedVedioPaths + "");
         }
 
     }
@@ -95,9 +91,10 @@ public class VedioConference_Activity extends BaseActivity {
     public void onClick(View view) {
         switch (view.getId()) {
             case R.id.btn_movie://添加视频
-                Intent i = new Intent(this, PhotoMediaActivity.class);
-                i.putExtra("loadType", PhotoVideoDir.Type.VEDIO.toString());
-                startActivityForResult(i, 1);
+                VideoPicker videoPicker = VideoPicker.getInstance();
+                videoPicker.setMultiMode(true);
+                Intent i1 = new Intent(this, VideoGridActivity.class);
+                startActivityForResult(i1, 300);
                 break;
             case R.id.btn_upload://上传
                 break;
@@ -106,15 +103,15 @@ public class VedioConference_Activity extends BaseActivity {
         }
     }
 
-    private class MyAdapter extends BaseAdapter {
+    private class MyVideoAdapter extends BaseAdapter {
 
-        private List<String> items;
+        private List<VideoItem> items;
 
-        public MyAdapter(List<String> items) {
+        public MyVideoAdapter(List<VideoItem> items) {
             this.items = items;
         }
 
-        public void setData(List<String> items) {
+        public void setData(List<VideoItem> items) {
             this.items = items;
             notifyDataSetChanged();
         }
@@ -125,7 +122,7 @@ public class VedioConference_Activity extends BaseActivity {
         }
 
         @Override
-        public String getItem(int position) {
+        public VideoItem getItem(int position) {
             return items.get(position);
         }
 
@@ -135,31 +132,44 @@ public class VedioConference_Activity extends BaseActivity {
         }
 
         @Override
-        public View getView(int position, View convertView, ViewGroup parent) {
+        public View getView(final int position, View convertView, ViewGroup parent) {
             int size = egv.getWidth() / 3;
-            ViewHolder holder;
-            if (convertView == null) {
-                convertView = View.inflate(VedioConference_Activity.this, R.layout.item, null);
-                holder = new ViewHolder(convertView);
-                convertView.setTag(holder);
-            } else {
-                holder = (ViewHolder) convertView.getTag();
-            }
-            //把选中图片的资源放在imageView中
-            Glide.with(VedioConference_Activity.this).load(getItem(position)).placeholder(R.mipmap.default_image).into(holder.imageView);
-            return convertView;
+            FrameLayout layout= new FrameLayout(VedioConference_Activity.this);//定义框架布局器
+
+            ImageView imageView = new ImageView(VedioConference_Activity.this);
+            FrameLayout.LayoutParams abParams = new FrameLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, size);
+            imageView.setLayoutParams(abParams);
+            imageView.setBackgroundColor(Color.parseColor("#88888888"));
+
+            ImageButton btnPlay=new ImageButton(VedioConference_Activity.this);
+            btnPlay.setBackgroundResource(R.mipmap.play);
+            FrameLayout.LayoutParams bparams=new FrameLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT,
+                    ViewGroup.LayoutParams.WRAP_CONTENT);//定义显示组件参数
+            //此处相当于布局文件中的Android:layout_gravity属性
+            bparams.gravity = Gravity.CENTER;
+            btnPlay.setLayoutParams(bparams);
+
+            layout.addView(imageView, abParams);//添加组件
+            layout.addView(btnPlay, bparams);
+//            videoPicker.getImageLoader().displayImage(ImagePickerActivity.this, getItem(position).path, imageView, size, size);
+            Glide.with(VedioConference_Activity.this)
+                    .load(getItem(position).path)
+                    .placeholder(R.mipmap.default_image)
+                    .into(imageView);
+            /**
+             * 点击播放播放视频
+             */
+            btnPlay.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    Uri uri = Uri.parse(getItem(position).path);
+                    //调用系统自带的播放器
+                    Intent intent = new Intent(Intent.ACTION_VIEW);
+                    intent.setDataAndType(uri, "video/mp4");
+                    startActivity(intent);
+                }
+            });
+            return layout;
         }
     }
-
-    private class ViewHolder {
-
-        private ImageView imageView;
-
-        public ViewHolder(View convertView) {
-            imageView = (ImageView) convertView.findViewById(R.id.imageView);
-            FrameLayout.LayoutParams params = new FrameLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, egv.getWidth() / 3);
-            imageView.setLayoutParams(params);
-        }
-    }
-
 }

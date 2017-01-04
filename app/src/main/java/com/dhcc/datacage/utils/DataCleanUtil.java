@@ -1,36 +1,35 @@
 package com.dhcc.datacage.utils;
 
-/**
- * Created by pengbangqin on 2016/12/10.
- */
-
 import android.content.Context;
 import android.os.Environment;
+import android.widget.Toast;
+
 import java.io.File;
 import java.math.BigDecimal;
 
-/** * 本应用数据清除管理器 */
-public class DataClearManager {
-    /**
-     * 获取缓存大小
-     * @param context
-     * @return
-     * @throws Exception
-     */
-    public static String getTotalCacheSize(Context context) throws Exception {
-        //获取应用内缓存的大小
-        long cacheSize = getFolderSize(context.getCacheDir());
-        //如果存在SD卡 则获取sd卡缓存的大小
+public class DataCleanUtil {
+
+
+
+
+    public static void clearAllCache(Context context) {
+        deleteDir(context.getCacheDir());
         if (Environment.getExternalStorageState().equals(Environment.MEDIA_MOUNTED)) {
+            deleteDir(context.getExternalCacheDir());
+        }
+    }
+
+
+    public static String getTotalCacheSize(Context context) throws Exception {
+        long cacheSize = getFolderSize(context.getCacheDir());
+        if (Environment.getExternalStorageState().equals(
+                Environment.MEDIA_MOUNTED)) {
             cacheSize += getFolderSize(context.getExternalCacheDir());
         }
-        //格式化单位 转化为KB
         return getFormatSize(cacheSize);
     }
 
-    /**
-     * 获取文件夹大小
-     */
+    // 获取文件
     //Context.getExternalFilesDir() --> SDCard/Android/data/你的应用的包名/files/ 目录，一般放一些长时间保存的数据
     //Context.getExternalCacheDir() --> SDCard/Android/data/你的应用包名/cache/目录，一般存放临时缓存数据
     public static long getFolderSize(File file) throws Exception {
@@ -52,33 +51,6 @@ public class DataClearManager {
     }
 
     /**
-     * 清除所有缓存(内置和sd卡)
-     * @param context
-     */
-    public static void clearAllCache(Context context) {
-        deleteDir(context.getCacheDir());
-        if (Environment.getExternalStorageState().equals(Environment.MEDIA_MOUNTED)) {
-            deleteDir(context.getExternalCacheDir());
-        }
-    }
-
-    private static boolean deleteDir(File dir) {
-        if(dir == null){
-            return false;
-        }
-        if (dir != null && dir.isDirectory()) {
-            String[] children = dir.list();
-            for (int i = 0; i < children.length; i++) {
-                boolean success = deleteDir(new File(dir, children[i]));
-                if (!success) {
-                    return false;
-                }
-            }
-        }
-        return dir.delete();
-    }
-
-    /**
      * 格式化单位
      *
      * @param size
@@ -88,7 +60,7 @@ public class DataClearManager {
         double kiloByte = size / 1024;
         if (kiloByte < 1) {
 //            return size + "Byte";
-            return "0.00K";
+            return "0K";
         }
 
         double megaByte = kiloByte / 1024;
@@ -116,39 +88,59 @@ public class DataClearManager {
                 + "TB";
     }
 
-    /** * 清除本应用内部缓存(/data/data/com.xxx.xxx/cache) * * @param context */
+
+    /**
+     * 清除本应用内部缓存(/data/data/com.xxx.xxx/cache)
+     *
+     * @param context
+     */
     public static void cleanInternalCache(Context context) {
         deleteFilesByDirectory(context.getCacheDir());
     }
 
-    /** * 清除本应用所有数据库(/data/data/com.xxx.xxx/databases) * * @param context */
+    /**
+     * 清除本应用所有数据库(/data/data/com.xxx.xxx/databases)
+     *
+     * @param context
+     */
     public static void cleanDatabases(Context context) {
         deleteFilesByDirectory(new File("/data/data/"
                 + context.getPackageName() + "/databases"));
     }
 
     /**
-     * * 清除本应用SharedPreference(/data/data/com.xxx.xxx/shared_prefs) * * @param
-     * context
+     * 清除本应用SharedPreference(/data/data/com.xxx.xxx/shared_prefs)
+     *
+     * @param context
      */
     public static void cleanSharedPreference(Context context) {
         deleteFilesByDirectory(new File("/data/data/"
                 + context.getPackageName() + "/shared_prefs"));
     }
 
-    /** * 按名字清除本应用数据库 * * @param context * @param dbName */
+    /**
+     * 按名字清除本应用数据库
+     *
+     * @param context
+     * @param dbName
+     */
     public static void cleanDatabaseByName(Context context, String dbName) {
         context.deleteDatabase(dbName);
     }
 
-    /** * 清除/data/data/com.xxx.xxx/files下的内容 * * @param context */
+    /**
+     * 清除/data/data/com.xxx.xxx/files下的内容
+     *
+     * @param context
+     */
     public static void cleanFiles(Context context) {
         deleteFilesByDirectory(context.getFilesDir());
     }
 
     /**
-     * * 清除外部cache下的内容(/mnt/sdcard/android/data/com.xxx.xxx/cache) * * @param
-     * context
+     * 清除外部cache下的内容(/mnt/sdcard/android/data/com.xxx.xxx/cache)
+     *
+     * @param context
      */
     public static void cleanExternalCache(Context context) {
         if (Environment.getExternalStorageState().equals(
@@ -157,24 +149,38 @@ public class DataClearManager {
         }
     }
 
-    /** * 清除自定义路径下的文件，使用需小心，请不要误删。而且只支持目录下的文件删除 * * @param filePath */
+    /**
+     * 清除自定义路径下的文件，使用需小心，请不要误删。而且只支持目录下的文件删除
+     *
+     * @param filePath
+     */
     public static void cleanCustomCache(String filePath) {
         deleteFilesByDirectory(new File(filePath));
     }
 
-    /** * 清除本应用所有的数据 * * @param context * @param filepath */
-    public static void cleanApplicationData(Context context, String... filepath) {
+    /**
+     * 清除本应用所有的数据
+     *
+     * @param context
+     */
+    public static void cleanApplicationData(Context context) {
         cleanInternalCache(context);
         cleanExternalCache(context);
         cleanDatabases(context);
         cleanSharedPreference(context);
         cleanFiles(context);
-        for (String filePath : filepath) {
-            cleanCustomCache(filePath);
-        }
+
+        Toast.makeText(context, "缓存已清理", Toast.LENGTH_SHORT).show();
+        // for (String filePath : filepath) {
+        // cleanCustomCache(filePath);
+        // }
     }
 
-    /** * 删除方法 这里只会删除某个文件夹下的文件，如果传入的directory是个文件，将不做处理 * * @param directory */
+    /**
+     * 删除方法 这里只会删除某个文件夹下的文件，如果传入的directory是个文件，将不做处理
+     *
+     * @param directory
+     */
     private static void deleteFilesByDirectory(File directory) {
         if (directory != null && directory.exists() && directory.isDirectory()) {
             for (File item : directory.listFiles()) {
@@ -182,4 +188,18 @@ public class DataClearManager {
             }
         }
     }
+
+    private static boolean deleteDir(File dir) {
+        if (dir != null && dir.isDirectory()) {
+            String[] children = dir.list();
+            for (int i = 0; i < children.length; i++) {
+                boolean success = deleteDir(new File(dir, children[i]));
+                if (!success) {
+                    return false;
+                }
+            }
+        }
+        return dir.delete();
+    }
+
 }

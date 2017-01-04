@@ -141,7 +141,7 @@
                         android:layout_gravity="center"
                         android:text="添加视频" />
                 </LinearLayout>
-                <com.dhcc.datacage.view.ExpandGridView
+                <com.lzy.widget.ExpandGridView
                     android:id="@+id/egv"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"

@@ -19,13 +19,25 @@
         stv:sLeftIconRes="@mipmap/gzt2"
         stv:sBottomLineMargin="0dp"
         stv:sLeftTextString="音视频会议" />
+
     <com.allen.supertextviewlibrary.SuperTextView
         android:id="@+id/stv_gzt3"
         android:layout_width="match_parent"
         android:layout_height="50dp"
         stv:sLeftIconRes="@mipmap/gzt3"
         stv:sBottomLineMargin="0dp"
-        stv:sLeftTextString="我的待办" />
+        stv:sLeftTextString="我的待办" >
+
+        <com.dhcc.datacage.view.BadgeView
+            android:id="@+id/tv_tishi"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentEnd="true"
+            android:layout_alignParentRight="true"
+            android:layout_alignParentBottom="true"
+            android:layout_margin="10dp"
+            />
+    </com.allen.supertextviewlibrary.SuperTextView>
 
     <com.allen.supertextviewlibrary.SuperTextView
         android:id="@+id/stv_gzt4"

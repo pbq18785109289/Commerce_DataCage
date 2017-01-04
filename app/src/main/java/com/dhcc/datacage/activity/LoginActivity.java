@@ -1,9 +1,13 @@
 package com.dhcc.datacage.activity;
 
+import android.Manifest;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.AppCompatButton;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
@@ -11,21 +15,39 @@ import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.TextView;
+import android.widget.Toast;
+
 import com.dhcc.datacage.R;
+import com.dhcc.datacage.activity.law.Check_Activity;
+import com.dhcc.datacage.base.ActivityCollector;
 import com.dhcc.datacage.base.BaseActivity;
 import com.dhcc.datacage.callback.DialogCallback;
+import com.dhcc.datacage.callback.JsonCallback;
+import com.dhcc.datacage.callback.StringDialogCallback;
+import com.dhcc.datacage.model.DhcResponse;
 import com.dhcc.datacage.model.SimpleResponse;
 import com.dhcc.datacage.utils.MyApp;
 import com.dhcc.datacage.utils.UrlUtils;
 import com.dhcc.datacage.view.ClearEditText;
 import com.dhcc.datacage.view.PasswordEditText;
 import com.lzy.okgo.OkGo;
+import com.yanzhenjie.permission.AndPermission;
+import com.yanzhenjie.permission.PermissionNo;
+import com.yanzhenjie.permission.PermissionYes;
+import com.yanzhenjie.permission.Rationale;
+import com.yanzhenjie.permission.RationaleListener;
+
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import butterknife.Bind;
 import butterknife.ButterKnife;
 import butterknife.OnCheckedChanged;
 import butterknife.OnClick;
 import okhttp3.Call;
 import okhttp3.Response;
+
+import static android.content.Context.MODE_PRIVATE;
 
 
 /**
@@ -55,9 +77,43 @@ public class LoginActivity extends BaseActivity {
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
+        setTheme(R.style.AppTheme);
         super.onCreate(savedInstanceState);
         setContentView(R.layout.login_activity);
         ButterKnife.bind(this);
+        //申请运行时的权限
+        AndPermission.with(this)
+                .requestCode(100)
+                .permission(Manifest.permission.READ_PHONE_STATE,
+                        Manifest.permission.WRITE_EXTERNAL_STORAGE,
+                        Manifest.permission.READ_EXTERNAL_STORAGE)
+                .send();
+    }
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        // 只需要调用这一句，剩下的AndPermission自动完成。
+        AndPermission.onRequestPermissionsResult(this, requestCode, permissions, grantResults);
+    }
+    // 成功回调的方法，用注解即可，里面的数字是请求时的requestCode。
+    @PermissionYes(100)
+    private void getAllYes() {
+        init();
+        // 申请权限成功，可以去做点什么了。
+        Toast.makeText(this, "获取权限成功", Toast.LENGTH_SHORT).show();
+    }
+
+    // 失败回调的方法，用注解即可，里面的数字是请求时的requestCode。
+    @PermissionNo(100)
+    private void getAllNo() {
+        // 申请权限失败，可以提醒一下用户。
+        Toast.makeText(this, "获取权限失败", Toast.LENGTH_SHORT).show();
+        //退出应用
+        ActivityCollector.finishAll();
+    }
+    /**
+     * 初始化操作
+     */
+    private void init(){
         //如果getIntent不为空,说明是从设置中跳转过来的  将isExitLogin传来为true  否则就为false
         if(getIntent()!=null){
             MyApp.isExitLogin=getIntent().getBooleanExtra("isExitLogin",false);
@@ -88,7 +144,6 @@ public class LoginActivity extends BaseActivity {
             }
         }
     }
-
 
     @OnCheckedChanged({R.id.cb_pwd, R.id.cb_auto})
     public void OnCheckedChanged(CompoundButton buttonView, boolean isChecked) {
@@ -133,30 +188,44 @@ public class LoginActivity extends BaseActivity {
         Intent intent = new Intent(LoginActivity.this, MainActivity.class);
         finish();
         startActivity(intent);
-        OkGo.post(UrlUtils.URL_LOGIN)
+        OkGo.get("http://192.168.0.109/hello/get_data.json")
                 .tag(this)
-                .params("cmd","0")
-                .params("name",username)
-                .params("password", password)
-                .execute(new DialogCallback<SimpleResponse>(this) {
+//                .params("cmd","0")
+//                .params("name",username)
+//                .params("password", password)
+                .execute(new StringDialogCallback(this) {
                     //请求成功
                     @Override
-                    public void onSuccess(SimpleResponse simpleResponse, Call call, Response response) {
-                        showToast("登录成功"+simpleResponse.uid);
-                        //登录成功和记住密码框为选中状态才保存用户信息
-                        if(cbPwd.isChecked()){
-                            //记住用户名和密码
-                            SharedPreferences.Editor editor=sp.edit();
-                            editor.putString("name", username);
-                            editor.putString("pwd", password);
-                            editor.commit();
+                    public void onSuccess(String s, Call call, Response response) {
+                        JSONObject jsonObject= null;
+                        try {
+                            jsonObject = new JSONObject(s);
+                            String code=jsonObject.getString("code");
+                            if(code.equals("0")){
+                                showToast("登录成功");
+                                Intent intent = new Intent(LoginActivity.this, MainActivity.class);
+                                finish();
+                                startActivity(intent);
+                                //登录成功和记住密码框为选中状态才保存用户信息
+                                if(cbPwd.isChecked()){
+                                    //记住用户名和密码
+                                    SharedPreferences.Editor editor=sp.edit();
+                                    editor.putString("name", username);
+                                    editor.putString("pwd", password);
+                                    editor.commit();
+                                }
+                            }else{
+                                showToast("用户名或密码错误");
+                            }
+                        } catch (JSONException e) {
+                            e.printStackTrace();
                         }
                     }
 
                     @Override
                     public void onError(Call call, Response response, Exception e) {
                         super.onError(call, response, e);
-//                        showToast("登录失败");
+                        showToast("登录失败");
                     }
                 });
     }
