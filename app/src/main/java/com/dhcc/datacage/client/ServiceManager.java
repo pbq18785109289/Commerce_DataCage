@@ -85,6 +85,7 @@ public final class ServiceManager {
 			callbackActivityClassName = callbackActivity.getClass().getName();
 		}
 
+		//读取配置文件androidpn
 		props = loadProperties();
 		apiKey = props.getProperty("apiKey", "");
 		xmppHost = props.getProperty("xmppHost", "127.0.0.1");
@@ -109,6 +110,9 @@ public final class ServiceManager {
 		// Log.i(LOGTAG, "sharedPrefs=" + sharedPrefs.toString());
 	}
 
+	/**
+	 * 开启推送服务
+	 */
 	public void startService() {
 		Thread serviceThread = new Thread(new Runnable() {
 			@Override
@@ -121,6 +125,9 @@ public final class ServiceManager {
 		serviceThread.start();
 	}
 
+	/**
+	 * 停止推送服务
+	 */
 	public void stopService() {
 		Intent intent = NotificationService.getIntent();
 		context.stopService(intent);
@@ -139,11 +146,9 @@ public final class ServiceManager {
 			//等待1s当NotificationService服务启动后才能拿到他的实例
 			@Override
 			public void run() {
-				// TODO Auto-generated method stub
 				try {
 					Thread.sleep(1000);
 				} catch (InterruptedException e) {
-					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
 				//拿到NotificationService的实例
@@ -202,6 +207,7 @@ public final class ServiceManager {
 							synchronized (xmppManager) {
 								Log.d(LOGTAG,
 										"settags wait for authenticated...");
+								//致使当前线程等待,wait只能由持有对像锁的线程来调用
 								xmppManager.wait();
 							}
 						} catch (InterruptedException e) {
@@ -220,12 +226,22 @@ public final class ServiceManager {
 		}).start();
 	}
 
-
+	/**
+	 * 加载raw文件下的配置
+	 * @return
+	 */
 	private Properties loadProperties() {
 		Properties props = new Properties();
 		try {
+			/**
+			 * 利用资源名获取其ID
+			 * 第一个参数:资源的名称 androidpn
+			 * 第二个参数:资源的类型(drawable,string,raw等)
+			 * 第三个参数:包名
+			 */
 			int id = context.getResources().getIdentifier("androidpn", "raw",
 					context.getPackageName());
+			//获取raw文件数据 操作InputStream得到数据。
 			props.load(context.getResources().openRawResource(id));
 		} catch (Exception e) {
 			Log.e(LOGTAG, "Could not find the properties file.", e);
@@ -235,16 +251,16 @@ public final class ServiceManager {
 	}
 
 	/**
-	 * 保存推送图标
+	 * 设置推送图标
 	 * @param iconId
-     */
+	 */
 	public void setNotificationIcon(int iconId) {
 		Editor editor = sharedPrefs.edit();
 		editor.putInt(Constants.NOTIFICATION_ICON, iconId);
 		editor.commit();
 	}
 	/**
-	 * 保存已推送的数量
+	 * 设置已推送的数量
 	 * @param result
 	 */
 	public void setNotificationResult(int result) {
@@ -253,6 +269,10 @@ public final class ServiceManager {
 		editor.commit();
 	}
 
+	/**
+	 * 推送设置
+	 * @param context
+     */
 	public static void viewNotificationSettings(Context context) {
 		Intent intent = new Intent().setClass(context,
 				NotificationSettingsActivity.class);

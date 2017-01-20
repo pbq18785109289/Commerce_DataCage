@@ -1,15 +1,19 @@
 package com.dhcc.datacage.activity;
 
 import android.Manifest;
+import android.app.ActivityManager;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.AppCompatButton;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.View;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
@@ -50,7 +54,7 @@ import okhttp3.Response;
 import static android.content.Context.MODE_PRIVATE;
 
 
-/**
+/**A
  * Created by pengbangqin on 16-10-27.
  * 登录界面
  */

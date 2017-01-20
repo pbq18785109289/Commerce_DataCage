@@ -7,15 +7,19 @@
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
         <item name="colorAccent">@color/colorAccent</item>
     </style>
+    <!-- 解决启动白屏的问题-->
+    <!--<style name="Splash" parent="BaseAppTheme">-->
+        <!--<item name="android:windowBackground">@drawable/splash_xml</item>-->
+    <!--</style>-->
     <!-- 解决启动白屏的问题 设置一个透明背景的主题-->
-    <style name="Appwelcome"
-        parent="android:Theme.Translucent.NoTitleBar.Fullscreen"/>
+    <!--<style name="Appwelcome"-->
+        <!--parent="android:Theme.Translucent.NoTitleBar.Fullscreen"/>-->
 
     <!-- 解决启动白屏的问题 -->
-    <!--<style name="AppWelcome" parent="AppTheme">-->
-        <!--<item name="android:windowBackground">@mipmap/bg</item>-->
-        <!--<item name="android:windowFullscreen">true</item>-->
-    <!--</style>-->
+    <style name="Splash" parent="AppTheme">
+        <item name="android:windowBackground">@mipmap/bg</item>
+        <item name="android:windowFullscreen">true</item>
+    </style>
 
     <style name="AppTheme" parent="@style/BaseAppTheme" />
 

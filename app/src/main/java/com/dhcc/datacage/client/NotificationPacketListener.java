@@ -30,6 +30,9 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 
 /**
+ * NotificationPacketListener从org.jivesoftware.smack.PacketListener继承而来，
+ * 主要实现processPacket函数用于处理xmpp返回包：
+ *
  * This class notifies the receiver of incoming notifcation packets asynchronously.
  * 接收服务器推送的消息
  * @author Sehwan Noh (devnoh@gmail.com)

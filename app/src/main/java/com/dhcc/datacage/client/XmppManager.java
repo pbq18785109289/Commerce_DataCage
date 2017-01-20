@@ -98,27 +98,34 @@ public class XmppManager {
 	private List<Runnable> taskList;
 
 	private boolean running = false;
-
+	/** FutureTask类同时又实现了Runnable接口，所以可以直接提交给Executor执行*/
 	private Future<?> futureTask;
 
 	private Thread reconnection;
 
 	public XmppManager(NotificationService notificationService) {
+		//服务名
 		context = notificationService;
+		//得到TaskSubmitter
 		taskSubmitter = notificationService.getTaskSubmitter();
+		//得到TaskTracker,这个跟踪器就是用来统计一种NotificationService的行为次数的，具体还没研究
 		taskTracker = notificationService.getTaskTracker();
 		sharedPrefs = notificationService.getSharedPreferences();
 
+		// 拿到一些参数
 		xmppHost = sharedPrefs.getString(Constants.XMPP_HOST, "localhost");
 		xmppPort = sharedPrefs.getInt(Constants.XMPP_PORT, 5222);
 		username = sharedPrefs.getString(Constants.XMPP_USERNAME, "");
 		password = sharedPrefs.getString(Constants.XMPP_PASSWORD, "");
-
+		//xmpp连接监视对象和NotificationPacketListener返回包监视对象。
 		connectionListener = new PersistentConnectionListener(this);
+		//用于处理推送消息的监听
 		notificationPacketListener = new NotificationPacketListener(this);
 
 		handler = new Handler();
+		//创建一个任务队列
 		taskList = new ArrayList<Runnable>();
+		//启动断线重连机制
 		reconnection = new ReconnectionThread(this);
 	}
 
@@ -126,6 +133,9 @@ public class XmppManager {
 		return context;
 	}
 
+	/**
+	 * 连接服务器
+	 */
 	public void connect() {
 		Log.d(LOGTAG, "connect()...");
 		submitLoginTask();
@@ -204,6 +214,9 @@ public class XmppManager {
 		return handler;
 	}
 
+	/**
+	 * 注册账户
+	 */
 	public void reregisterAccount() {
 		removeAccount();
 		submitLoginTask();
@@ -222,6 +235,7 @@ public class XmppManager {
 	 */
 	public void runTask() {
 		Log.d(LOGTAG, "runTask()...");
+		//同步代码块
 		synchronized (taskList) {
 			running = false;
 			futureTask = null;
@@ -258,17 +272,26 @@ public class XmppManager {
 				&& sharedPrefs.contains(Constants.XMPP_PASSWORD);
 	}
 
+	/**
+	 * 提交连接任务
+	 */
 	private void submitConnectTask() {
 		Log.d(LOGTAG, "submitConnectTask()...");
 		addTask(new ConnectTask());
 	}
 
+	/**
+	 * 提交注册任务
+	 */
 	private void submitRegisterTask() {
 		Log.d(LOGTAG, "submitRegisterTask()...");
 		submitConnectTask();
 		addTask(new RegisterTask());
 	}
 
+	/**
+	 * 提交登录任务
+	 */
 	private void submitLoginTask() {
 		Log.d(LOGTAG, "submitLoginTask()...");
 		submitRegisterTask();
@@ -295,6 +318,9 @@ public class XmppManager {
 		Log.d(LOGTAG, "addTask(runnable)... done");
 	}
 
+	/**
+	 * 移除该账户
+	 */
 	private void removeAccount() {
 		Editor editor = sharedPrefs.edit();
 		editor.remove(Constants.XMPP_USERNAME);
@@ -318,6 +344,8 @@ public class XmppManager {
 	}
 
 	/**
+	 * 使用ASmack连接服务器
+	 * 用于连接服务器，连接成功后，org.jivesoftware.smack.XMPPConnection对象的isConnected方法返回true。
 	 * A runnable task to connect the server.
 	 */
 	private class ConnectTask implements Runnable {
@@ -332,19 +360,22 @@ public class XmppManager {
 			Log.i(LOGTAG, "ConnectTask.run()...");
 
 			if (!xmppManager.isConnected()) {
+				//配置文件 参数（服务地地址，端口号，域）
 				// Create the configuration for this new connection
 				ConnectionConfiguration connConfig = new ConnectionConfiguration(
 						xmppHost, xmppPort);
 				// connConfig.setSecurityMode(SecurityMode.disabled);
+				//设置安全类型
 				connConfig.setSecurityMode(SecurityMode.required);
+				//设置不需要SAS验证
 				connConfig.setSASLAuthenticationEnabled(false);
 				connConfig.setCompressionEnabled(false);
-
+				//建立连接 用连接配置对象创建org.jivesoftware.smack.XMPPConnection对象
 				XMPPConnection connection = new XMPPConnection(connConfig);
 				xmppManager.setConnection(connection);
 
 				try {
-					// Connect to the server
+					// Connect to the server 连接服务器
 					connection.connect();
 					Log.i(LOGTAG, "XMPP connected successfully");
 
@@ -352,6 +383,7 @@ public class XmppManager {
 					ProviderManager.getInstance().addIQProvider("notification",
 							"androidpn:iq:notification",
 							new NotificationIQProvider());
+					//通知执行下一个任务 (注册任务)
 					xmppManager.runTask();
 				} catch (XMPPException e) {
 					Log.e(LOGTAG, "XMPP connection failed", e);
@@ -369,6 +401,8 @@ public class XmppManager {
 	}
 
 	/**
+	 * 使用ASmack中的注册模块
+	 * 用于发送包含用户名和密码的注册包给服务器，在服务器注册一个用户
 	 * A runnable task to register a new user onto the server.
 	 */
 	private class RegisterTask implements Runnable {
@@ -389,15 +423,17 @@ public class XmppManager {
 			if (!xmppManager.isRegistered()) {
 				isRegisterSucceed = false;
 				hasDropTask = false;
+				//随机生成用户名密码
 				final String newUsername = newRandomUUID();
 				final String newPassword = newRandomUUID();
-
+				//通过Registration类实现注册
 				Registration registration = new Registration();
-
+				//创建包过滤器  创建一个PacketFilter对象
 				PacketFilter packetFilter = new AndFilter(new PacketIDFilter(
 						registration.getPacketID()), new PacketTypeFilter(
 						IQ.class));
 
+				//创建一个PacketListener返回包监听对象
 				PacketListener packetListener = new PacketListener() {
 
 					@SuppressLint("LongLogTag")
@@ -409,7 +445,9 @@ public class XmppManager {
 									+ packet.toXML());
 
 							if (packet instanceof IQ) {
+								//获取返回信息
 								IQ response = (IQ) packet;
+								//注册失败
 								if (response.getType() == IQ.Type.ERROR) {
 									if (!response.getError().toString()
 											.contains("409")) {
@@ -418,6 +456,7 @@ public class XmppManager {
 														+ response.getError()
 														.getCondition());
 									}
+									//注册成功
 								} else if (response.getType() == IQ.Type.RESULT) {
 									xmppManager.setUsername(newUsername);
 									xmppManager.setPassword(newPassword);
@@ -442,9 +481,9 @@ public class XmppManager {
 						}
 					}
 				};
-
+				//添加对注册的监听
 				connection.addPacketListener(packetListener, packetFilter);
-
+				//设置类型
 				registration.setType(IQ.Type.SET);
 				// registration.setTo(xmppHost);
 				// Map<String, String> attributes = new HashMap<String,
@@ -452,14 +491,15 @@ public class XmppManager {
 				// attributes.put("username", rUsername);
 				// attributes.put("password", rPassword);
 				// registration.setAttributes(attributes);
+				//设置用户名
 				registration.addAttribute("username", newUsername);
+				//设置密码
 				registration.addAttribute("password", newPassword);
-				//发送注册信息到服务器
+				//发送注册信息到服务器  发送包
 				connection.sendPacket(registration);
 				try {
 					Thread.sleep(10 * 1000);
 				} catch (InterruptedException e) {
-					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
 				synchronized (xmppManager) {
@@ -480,6 +520,9 @@ public class XmppManager {
 	}
 
 	/**
+	 * 使用ASmack的登录模块
+	 * 用于登陆服务器，获得服务器授权，登陆服务器成功后，
+	 * org.jivesoftware.smack.XMPPConnection对象的isAuthenticated方法返回true。
 	 * A runnable task to log into the server.
 	 */
 	private class LoginTask implements Runnable {
@@ -498,6 +541,7 @@ public class XmppManager {
 				Log.d(LOGTAG, "password=" + password);
 
 				try {
+					//登录 调用org.jivesoftware.smack.XMPPConnection对象的login函数登陆服务器
 					xmppManager.getConnection().login(
 							xmppManager.getUsername(),
 							xmppManager.getPassword(), XMPP_RESOURCE_NAME);
@@ -510,9 +554,11 @@ public class XmppManager {
 					}
 
 					// packet filter
+					//将xmpp连接监听对象设置到org.jivesoftware.smack.XMPPConnection对象
 					PacketFilter packetFilter = new PacketTypeFilter(
 							NotificationIQ.class);
 					// packet listener
+					//将返回包监听对象设置到org.jivesoftware.smack.XMPPConnection对象
 					PacketListener packetListener = xmppManager
 							.getNotificationPacketListener();
 					connection.addPacketListener(packetListener, packetFilter);
@@ -520,6 +566,7 @@ public class XmppManager {
 					connection.startHeartBeat();
 					//通知ServiceManager中setAlias代码中 等待别名的时候  (可以不用等待了,身份验证成功)
 					synchronized (xmppManager) {
+						//只能由持有对像锁的线程来调用,唤配所有在此对象锁上等待的线程
 						xmppManager.notifyAll();
 					}
 				} catch (XMPPException e) {

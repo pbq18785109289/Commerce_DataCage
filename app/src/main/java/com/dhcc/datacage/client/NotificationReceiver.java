@@ -27,9 +27,9 @@ import static org.jivesoftware.smackx.pubsub.FormType.result;
 
 /** 
  * Broadcast receiver that handles push notification messages from the server.
- * This should be registered as receiver in AndroidManifest.xml. 
+ * This should be registered as receiver in AndroidManifest.xml.
+ * 接收推送消息的广播接收器
  * 
- * @author Sehwan Noh (devnoh@gmail.com)
  */
 public final class NotificationReceiver extends BroadcastReceiver {
 

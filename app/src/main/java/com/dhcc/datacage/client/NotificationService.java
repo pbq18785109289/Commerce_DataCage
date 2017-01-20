@@ -59,11 +59,11 @@ public class NotificationService extends Service {
 	private BroadcastReceiver connectivityReceiver;
 
 	private PhoneStateListener phoneStateListener;
-
+	/** 一个线程池 单线程线程池对象*/
 	private ExecutorService executorService;
-
+	/** TaskSubmitter对象负责将从Runnable继承的线程任务提交给ExecutorService对象。*/
 	private TaskSubmitter taskSubmitter;
-
+	/** 任务计数器*/
 	private TaskTracker taskTracker;
 
 	private XmppManager xmppManager;
@@ -76,6 +76,9 @@ public class NotificationService extends Service {
 		notificationReceiver = new NotificationReceiver();
 		connectivityReceiver = new ConnectivityReceiver(this);
 		phoneStateListener = new PhoneStateChangeListener(this);
+		//创建一个 ExecutorService 实例 3种一样的效果
+		//executorService = Executors.newFixedThreadPool(10);
+		//executorService = Executors.newScheduledThreadPool(10);
 		executorService = Executors.newSingleThreadExecutor();
 		taskSubmitter = new TaskSubmitter(this);
 		taskTracker = new TaskTracker(this);
@@ -102,26 +105,27 @@ public class NotificationService extends Service {
 		// Log.d(LOGTAG, "deviceId=" + deviceId);
 		Editor editor = sharedPrefs.edit();
 		editor.putString(Constants.DEVICE_ID, deviceId);
-		editor.commit();
+		editor.commit();//以上得到一些手机信息
 
 		// If running on an emulator
-		if (deviceId == null || deviceId.trim().length() == 0
-				|| deviceId.matches("0+")) {
-			if (sharedPrefs.contains("EMULATOR_DEVICE_ID")) {
-				deviceId = sharedPrefs.getString(Constants.EMULATOR_DEVICE_ID,
-						"");
-			} else {
-				deviceId = (new StringBuilder("EMU")).append(
-						(new Random(System.currentTimeMillis())).nextLong())
-						.toString();
-				editor.putString(Constants.EMULATOR_DEVICE_ID, deviceId);
-				editor.commit();
+		if (deviceId == null || deviceId.trim().length() == 0//模拟器
+						|| deviceId.matches("0+")) {
+					if (sharedPrefs.contains("EMULATOR_DEVICE_ID")) {
+						deviceId = sharedPrefs.getString(Constants.EMULATOR_DEVICE_ID,
+								"");
+					} else {
+						deviceId = (new StringBuilder("EMU")).append(
+								(new Random(System.currentTimeMillis())).nextLong())
+								.toString();
+						editor.putString(Constants.EMULATOR_DEVICE_ID, deviceId);
+						editor.commit();
 			}
 		}
 		Log.d(LOGTAG, "deviceId=" + deviceId);
+		// 以上都是一些配置信息
+		xmppManager = new XmppManager(this);//初始化XmppManager
 
-		xmppManager = new XmppManager(this);
-
+			// 开启推送服务 通过TaskSubmitter对象提交一个线程任务
 		taskSubmitter.submit(new Runnable() {
 			public void run() {
 				NotificationService.this.start();
@@ -189,6 +193,10 @@ public class NotificationService extends Service {
 		return deviceId;
 	}
 
+	/**
+	 * 在线程池中跑一个线程task 连接任务
+	 * 通过TaskSubmitter对象提交一个调用XmppManager对象的connect函数的线程任务。
+	 */
 	public void connect() {
 		Log.d(LOGTAG, "connect()...");
 		taskSubmitter.submit(new Runnable() {
@@ -198,6 +206,9 @@ public class NotificationService extends Service {
 		});
 	}
 
+	/**
+	 * 通过TaskSubmitter对象提交一个调用XmppManager对象的disconnect函数的线程任务。
+	 */
 	public void disconnect() {
 		Log.d(LOGTAG, "disconnect()...");
 		taskSubmitter.submit(new Runnable() {
@@ -207,6 +218,9 @@ public class NotificationService extends Service {
 		});
 	}
 
+	/**
+	 * 注册通知广播
+	 */
 	private void registerNotificationReceiver() {
 		IntentFilter filter = new IntentFilter();
 		filter.addAction(Constants.ACTION_SHOW_NOTIFICATION);
@@ -219,6 +233,9 @@ public class NotificationService extends Service {
 		unregisterReceiver(notificationReceiver);
 	}
 
+	/**
+	 * 注册网络连接广播
+	 */
 	private void registerConnectivityReceiver() {
 		Log.d(LOGTAG, "registerConnectivityReceiver()...");
 		telephonyManager.listen(phoneStateListener,
@@ -237,6 +254,8 @@ public class NotificationService extends Service {
 	}
 	/**
 	 * 开启任务
+	 * 注册广播接收器NotificationReceiver对象和ConnectivityReceiver对象，
+	 * 然后调用XmppManager对象的connect函数
 	 */
 	private void start() {
 		Log.d(LOGTAG, "start()...");
@@ -250,16 +269,21 @@ public class NotificationService extends Service {
 		xmppManager.connect();
 	}
 
+	/**
+	 * 注销广播接收器NotificationReceiver对象和ConnectivityReceiver对象，
+	 * 然后调用XmppManager对象的disconnect函数,最后停止ExecutorService单线程线程池对象
+	 */
 	private void stop() {
 		Log.d(LOGTAG, "stop()...");
 		unregisterNotificationReceiver();
 		unregisterConnectivityReceiver();
 		xmppManager.disconnect();
+		//关闭在 ExecutorService 中的线程
 		executorService.shutdown();
 	}
 
 	/**
-	 * Class for summiting a new runnable task.
+	 * TaskSubmitter对象负责将从Runnable继承的线程任务提交给ExecutorService对象:
 	 */
 	public class TaskSubmitter {
 
@@ -269,7 +293,13 @@ public class NotificationService extends Service {
 			this.notificationService = notificationService;
 		}
 
-		@SuppressWarnings("rawtypes")
+		/**
+		 * isShutdown:程序是否已经关闭 shutdown方法将导致其返回true。
+		 * isTerminated:是否已经结束，如果关闭后，所有的任务都执行完成，将返回true，否则其他情况均返回false。
+		 * Future submit(callable/runnale):向Executor提交任务，并返回一个结果未定的Future。
+		 * @param task
+         * @return
+         */
 		public Future submit(Runnable task) {
 			Future result = null;
 			if (!notificationService.getExecutorService().isTerminated()
@@ -283,7 +313,7 @@ public class NotificationService extends Service {
 	}
 
 	/**
-	 * Class for monitoring the running task count.
+	 * TaskTracker对象负责为NotificationService对象的待运行的线程任务计数
 	 */
 	public class TaskTracker {
 
@@ -291,18 +321,26 @@ public class NotificationService extends Service {
 
 		public int count;
 
+		/**
+		 * 任务计数器初始化
+		 */
 		public TaskTracker(NotificationService notificationService) {
 			this.notificationService = notificationService;
 			this.count = 0;
 		}
 
+		/**
+		 * 任务计数器+1
+		 */
 		public void increase() {
 			synchronized (notificationService.getTaskTracker()) {
 				notificationService.getTaskTracker().count++;
 				Log.d(LOGTAG, "Incremented task count to " + count);
 			}
 		}
-
+		/**
+		 * 任务计数器-1
+		 */
 		public void decrease() {
 			synchronized (notificationService.getTaskTracker()) {
 				notificationService.getTaskTracker().count--;

@@ -29,8 +29,6 @@ import java.util.ArrayList;
 import java.util.List;
 import butterknife.Bind;
 import butterknife.ButterKnife;
-import static com.dhcc.datacage.R.id.toolbar_title;
-
 
 /**
  * 主界面
@@ -38,7 +36,7 @@ import static com.dhcc.datacage.R.id.toolbar_title;
  * @author pengbangqin
  */
 public class MainActivity extends BaseActivity implements RadioGroup.OnCheckedChangeListener {
-    @Bind(toolbar_title)
+    @Bind(R.id.toolbar_title)
     TextView toolbarTitle;
     @Bind(R.id.toolbar)
     Toolbar toolbar;

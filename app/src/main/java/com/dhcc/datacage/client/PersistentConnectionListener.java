@@ -19,10 +19,13 @@ import android.util.Log;
 
 import org.jivesoftware.smack.ConnectionListener;
 
-/** 
- * A listener class for monitoring connection closing and reconnection events.
+/**
+ * PersistentConnectionListener类从org.jivesoftware.smack.ConnectionListener继承而来，
+ * 几个主要重载函数:connectionClosed、connectionClosedOnError、reconnectingIn、
+ * reconnectionFailed、reconnectionSuccessful。
  *
- * @author Sehwan Noh (devnoh@gmail.com)
+ * A listener class for monitoring connection closing and reconnection events.
+ * 连接的监听类: 连接断开和断线重连
  */
 public class PersistentConnectionListener implements ConnectionListener {
 
@@ -47,7 +50,7 @@ public class PersistentConnectionListener implements ConnectionListener {
                 && xmppManager.getConnection().isConnected()) {
             xmppManager.getConnection().disconnect();
         }
-        //������������
+        //启动断线重连
         xmppManager.startReconnectionThread();
     }
 

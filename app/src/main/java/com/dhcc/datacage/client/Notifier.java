@@ -35,8 +35,7 @@ import java.util.Random;
 
 /**
  * This class is to notify the user of messages with NotificationManager.
- *
- * @author Sehwan Noh (devnoh@gmail.com)
+ *负责通知状态栏显示收到的消息
  */
 public class Notifier {
 
